@@ -24,6 +24,13 @@ io.on('connection', (socket) => {
         })
     }
 
+    let roomExists = function (room) {
+        io.in(room).clients((error, clients) => {
+            if (error) throw error;
+            return clients.length > 0;
+        });
+    }
+
     socket.on('disconnect', function () {
         io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
         updateAndEmitUserList();
@@ -31,11 +38,21 @@ io.on('connection', (socket) => {
 
 
     socket.on('joinRoomRequest', (data) => {
-        //TODO Check for existing sessions and join them
-        socket.join(data.room, () => {
-            socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
-            updateAndEmitUserList();
-        });
+        //room already exists, so join it
+        if (io.sockets.adapter.rooms[data.room]) {
+            socket.join(data.room, () => {
+                socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
+                updateAndEmitUserList();
+            });
+        }
+        //no one is in the room so the current client becomes room admin
+        else {
+            socket.join(data.room, () => {
+                socket.user.isAdmin = true;
+                socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
+            });
+        }
+
 
         //set socket basic data
         socket.room = data.room;
