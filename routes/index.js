@@ -24,24 +24,42 @@ io.on('connection', (socket) => {
         })
     }
 
-    let roomExists = function (room) {
-        io.in(room).clients((error, clients) => {
+    let setNewRandomAdmin = function () {
+
+        io.in(socket.room).clients((error, clients) => {
             if (error) throw error;
-            return clients.length > 0;
+            const randomClientId = clients[Math.floor(Math.random() * clients.length)];
+            let randomUser = io.sockets.connected[randomClientId].user;
+            randomUser.isAdmin = true;
+            io.to(randomClientId).emit('adminPromotion');
         });
     }
 
+    let isRoomEmpty = function (name) {
+        return io.sockets.adapter.rooms[name] === undefined;
+    }
+
     socket.on('disconnect', function () {
+        if (!isRoomEmpty(socket.room) && socket.user.isAdmin) {
+            console.log("admin left");
+            setNewRandomAdmin();
+        }
         io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
         updateAndEmitUserList();
     });
 
 
     socket.on('joinRoomRequest', (data) => {
+
+        //set socket basic data
+        socket.room = data.room;
+        socket.user = data.user;
+
         //room already exists, so join it
-        if (io.sockets.adapter.rooms[data.room]) {
+        if (!isRoomEmpty(data.room)) {
             socket.join(data.room, () => {
                 socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
+                socket.emit('roomJoinSucceed', {room: socket.room, user: socket.user});
                 updateAndEmitUserList();
             });
         }
@@ -50,16 +68,11 @@ io.on('connection', (socket) => {
             socket.join(data.room, () => {
                 socket.user.isAdmin = true;
                 socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
+                socket.emit('roomJoinSucceed', {room: socket.room, user: socket.user});
             });
         }
 
 
-        //set socket basic data
-        socket.room = data.room;
-        socket.user = data.user;
-
-
-        socket.emit('roomJoinSucceed');
         console.log(socket.user.name + " joined: " + socket.room);
 
     });
