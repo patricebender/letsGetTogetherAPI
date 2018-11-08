@@ -48,6 +48,10 @@ io.on('connection', (socket) => {
         updateAndEmitUserList();
     });
 
+    socket.on('startGame', function () {
+        socket.emit('gameStarted');
+    });
+
 
     socket.on('joinRoomRequest', (data) => {
 
