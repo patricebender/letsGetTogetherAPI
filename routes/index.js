@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('startGame', function () {
-        socket.emit('gameStarted');
+        io.in(socket.room).emit('gameStarted');
     });
 
 
