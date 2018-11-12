@@ -1,6 +1,8 @@
+
 let app = require('express')();
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
+
 
 
 io.on('connection', (socket) => {
@@ -85,8 +87,25 @@ io.on('connection', (socket) => {
         updateAndEmitUserList("Only emit to requester");
     });
 
+    socket.on('requestAvatarList', () => {
+        const avatarFolder = './img/avatar';
+        const fs = require('fs');
+        let avatarFileNames = [];
 
-});
+        fs.readdir(avatarFolder, (err, files) => {
+            files.forEach(fileName => {
+                if(!err && fileName !== '')
+                avatarFileNames.push(fileName);
+            });
+            socket.emit('receiveAvatarList', {avatarFileNames: avatarFileNames});
+        })
+
+
+
+    })
+
+})
+;
 
 
 let port = process.env.PORT || 3001;
@@ -94,3 +113,4 @@ let port = process.env.PORT || 3001;
 http.listen(port, function () {
     console.log('listening on http://localhost:' + port);
 });
+
