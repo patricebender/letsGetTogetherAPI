@@ -33,6 +33,7 @@ io.on('connection', (socket) => {
             let randomUser = io.sockets.connected[randomClientId].user;
             randomUser.isAdmin = true;
             io.to(randomClientId).emit('adminPromotion');
+            updateAndEmitUserList();
         });
     }
 
@@ -114,12 +115,10 @@ io.on('connection', (socket) => {
                 socket.user.isAdmin = false;
                 socket.emit('updateUser', {user: socket.user});
             }
+
             io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
-            socket.room = undefined;
-
-
         })
-
+        updateAndEmitUserList();
     });
 
 
