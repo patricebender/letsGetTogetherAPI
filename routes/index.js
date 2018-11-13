@@ -5,10 +5,8 @@ let io = require('socket.io')(http);
 
 io.on('connection', (socket) => {
 
-    let updateAndEmitUserList = function (emitToSocket) {
-
-
-        io.in(socket.room).clients((error, clients) => {
+    let updateAndEmitUserListOfRoom = function (room, emitToSocket) {
+        io.in(room).clients((error, clients) => {
             if (error) throw error;
 
             let userList = [];
@@ -19,7 +17,7 @@ io.on('connection', (socket) => {
             if (emitToSocket) {
                 socket.emit('receiveUserList', {userList: userList});
             } else {
-                io.in(socket.room).emit('receiveUserList', {userList: userList});
+                io.in(room).emit('receiveUserList', {userList: userList});
             }
 
         })
@@ -33,7 +31,6 @@ io.on('connection', (socket) => {
             let randomUser = io.sockets.connected[randomClientId].user;
             randomUser.isAdmin = true;
             io.to(randomClientId).emit('adminPromotion');
-            updateAndEmitUserList();
         });
     }
 
@@ -48,8 +45,10 @@ io.on('connection', (socket) => {
             console.log("admin left");
             setNewRandomAdmin();
         }
-        io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
-        updateAndEmitUserList();
+        if(socket.room){
+            io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
+            updateAndEmitUserListOfRoom(socket.room);
+        }
     });
 
     socket.on('startGame', function () {
@@ -58,7 +57,6 @@ io.on('connection', (socket) => {
 
 
     socket.on('joinRoomRequest', (data) => {
-        //TODO Check for duplicate user
         socket.user = data.user;
 
 
@@ -74,7 +72,7 @@ io.on('connection', (socket) => {
 
                 socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
                 socket.emit('roomJoinSucceed', {room: socket.room, user: socket.user});
-                updateAndEmitUserList();
+                updateAndEmitUserListOfRoom(socket.room);
             });
 
         }
@@ -108,7 +106,7 @@ io.on('connection', (socket) => {
 
     socket.on('leaveRoom', () => {
         socket.leave(socket.room, () => {
-            console.log(socket.user.name + " left room " + socket.room);
+            console.log(JSON.stringify(socket.user) + " left room " + socket.room);
             if (!isRoomEmpty(socket.room) && socket.user.isAdmin) {
                 console.log("admin left");
                 setNewRandomAdmin();
@@ -116,15 +114,19 @@ io.on('connection', (socket) => {
                 socket.emit('updateUser', {user: socket.user});
             }
 
+            console.log("emit user change: " + socket.room )
             io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
+            const room = socket.room;
+            socket.room = '';
+            updateAndEmitUserListOfRoom(room);
+        });
         })
-        updateAndEmitUserList();
-    });
+
 
 
     socket.on('requestUserList', () => {
         console.log(socket.user.name + " requests user list")
-        updateAndEmitUserList("Only emit to requester");
+        updateAndEmitUserListOfRoom(socket.room, "Only emit to requester");
     });
 
     socket.on('requestAvatarList', () => {
