@@ -84,7 +84,8 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createRoomRequest', (data) => {
-        console.log(JSON.stringify(socket.user.name) + " want's to create " + data.room);
+        socket.user = data.user;
+        console.log(JSON.stringify(socket.user) + " want's to create " + data.room);
 
         if (!isRoomEmpty(data.room)) {
             socket.emit('roomAlreadyExists');
