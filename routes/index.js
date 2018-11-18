@@ -4,6 +4,30 @@ let io = require('socket.io')(http);
 
 let gameMap = new Map();
 
+
+let surveyCard = {
+    category: 'survey',
+    title: 'Template Survey',
+    question: 'Lieber kreativ oder genial?',
+    answerCount: 0,
+    closed: false,
+    options: [
+        {
+            "title": "Kreativ",
+            "voters": [],
+            "percent": 0
+        },
+        {
+            "title": "Genial",
+            "voters": [],
+            "percent": 0
+        }
+    ]
+}
+
+let surveys = [surveyCard]
+
+
 io.on('connection', (socket) => {
 
     let updateAndEmitUserListOfRoom = function (room, emitToSocket) {
@@ -33,6 +57,80 @@ io.on('connection', (socket) => {
         })
     }
 
+
+    let emitRandomSurvey = function () {
+        let survey = surveys[Math.floor(Math.random() * surveys.length)];
+        let game = gameMap.get(socket.room);
+        // make object copy rather than creating reference to it
+        game.currentCard = JSON.parse(JSON.stringify(survey))
+        game.currentCategory = 'survey';
+        console.log("emitting survey to " + socket.room);
+        io.in(socket.room).emit('newSurvey', {survey: game.currentCard});
+    };
+
+    socket.on('surveyAnswer', (data) => {
+        if (!socket.user || !socket.room) return;
+
+        let survey = gameMap.get(socket.room).currentCard;
+        let userAnswer = data['answer'];
+
+        socket.user.hasAnswered = true;
+        survey.answerCount++;
+
+        console.log(socket.user.name + " answered " + data['surveyTitle'] + " \n with option: " + data['answer'] + " \n" +
+            "in room: " + socket.room)
+
+        // add user answer to currentCard in game
+        survey.options.forEach((option) => {
+            if (option.title === userAnswer) {
+                option.voters.push(socket.user);
+                option.answerCount = (option.voters.length / survey.answerCount) * 100
+            }
+        });
+
+        waitForUsers()
+            .then((users) => {
+                if (users.length === 0) {
+                    // close survey
+                    survey.closed = true;
+                    console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey))
+
+                    // noinspection JSUnresolvedFunction
+                    io.in(socket.room).emit('surveyResults', {survey: survey});
+
+                } else {
+                    console.log("Wait for users to answer: " + JSON.stringify(users))
+                    // noinspection JSUnresolvedFunction
+                    io.in(socket.room).emit('surveyUpdate', {survey: gameMap.get(socket.room).currentCard});
+                }
+
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+    });
+
+    //returns all users who have not answered yet
+    function waitForUsers() {
+        return new Promise(resolve => {
+            let users = [];
+            // noinspection JSUnresolvedFunction
+            io.in(socket.room).clients((error, clients) => {
+                clients.forEach((client) => {
+                    if (!io.sockets.connected[client].user.hasAnswered) {
+                        users.push(io.sockets.connected[client].user)
+                    }
+                })
+
+            });
+            resolve(users);
+        });
+
+
+    }
+
+
     let setNewRandomAdmin = function () {
 
         io.in(socket.room).clients((error, clients) => {
@@ -54,7 +152,7 @@ io.on('connection', (socket) => {
         console.log("Socket disconnects: " + JSON.stringify(socket.user))
         if (isRoomEmpty(socket.room)) {
             // if room is empty delete it from session array
-            console.log("no one is in the room anymore.. Deleting room")
+            console.log("no one is in the room anymore.. Deleting room");
             gameMap.set(socket.room, undefined);
 
         } else {
@@ -65,6 +163,7 @@ io.on('connection', (socket) => {
             if (socket.room) {
                 io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
                 updateAndEmitUserListOfRoom(socket.room);
+
             }
         }
 
@@ -72,6 +171,28 @@ io.on('connection', (socket) => {
 
     socket.on('startGame', function () {
         io.in(socket.room).emit('gameStarted');
+    });
+
+
+    socket.on('newCardRequest', function () {
+        if (!socket.user) return;
+        let game = gameMap.get(socket.room);
+
+
+        // reset user answers
+        game.players.forEach((player) => {
+            player.hasAnswered = false;
+        });
+
+        console.log(JSON.stringify(socket.user) + " requests new Card");
+
+        const randomCategory = game.categories[Math.floor(Math.random() * game.categories.length)].name;
+
+        switch (randomCategory) {
+            case 'Survey':
+                emitRandomSurvey();
+        }
+
     });
 
 
@@ -114,6 +235,7 @@ io.on('connection', (socket) => {
                 socket.room = data.room;
 
                 console.log("emitting update user: " + JSON.stringify(socket.user))
+
                 socket.emit('updateUser', {user: socket.user});
 
                 let game = {
@@ -122,11 +244,13 @@ io.on('connection', (socket) => {
                     categories: data.categories,
                     themes: data.themes,
                     cardsPerGame: data.cardsPerGame,
-                    currentCard: {}
+                    currentCard: undefined,
+                    currentCategory: 'none'
                 }
 
                 gameMap.set(data.room, game);
-                console.log(socket.room + " created!");
+                console.log(socket.room + " created!" +
+                    " with settings: " + JSON.stringify(game));
 
                 for (let [key, value] of gameMap) {
                     console.log(key + " = " + value);
