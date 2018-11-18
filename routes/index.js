@@ -2,10 +2,14 @@ let app = require('express')();
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 
+let gameMap = new Map();
 
 io.on('connection', (socket) => {
 
     let updateAndEmitUserListOfRoom = function (room, emitToSocket) {
+
+        if (!socket.user) return;
+
         io.in(room).clients((error, clients) => {
             if (error) throw error;
 
@@ -13,11 +17,17 @@ io.on('connection', (socket) => {
             clients.forEach(function (client) {
                 userList.push(io.sockets.connected[client].user)
             })
+
+            //refresh player list in game object
+            gameMap.get(room).players = userList;
+
+
             //only send to one client
             if (emitToSocket) {
-                socket.emit('receiveUserList', {userList: userList});
+                socket.emit('gameUpdate', {game: gameMap.get(room)});
             } else {
-                io.in(room).emit('receiveUserList', {userList: userList});
+                console.log("emitting game: " + JSON.stringify(gameMap.get(room)));
+                io.in(room).emit('gameUpdate', {game: gameMap.get(room)});
             }
 
         })
@@ -29,8 +39,7 @@ io.on('connection', (socket) => {
             if (error) throw error;
             const randomClientId = clients[Math.floor(Math.random() * clients.length)];
             let randomUser = io.sockets.connected[randomClientId].user;
-            randomUser.isAdmin = true;
-            io.to(randomClientId).emit('adminPromotion');
+            gameMap.get(socket.room).admin = randomUser;
         });
     }
 
@@ -40,20 +49,28 @@ io.on('connection', (socket) => {
 
 
     socket.on('disconnect', function () {
-        console.log("Socket disconnects: " + JSON.stringify(socket.user))
+        if (!socket.user) return;
 
-        if (!isRoomEmpty(socket.room) && socket.user.isAdmin) {
-            console.log("admin left");
-            setNewRandomAdmin();
+        console.log("Socket disconnects: " + JSON.stringify(socket.user))
+        if (isRoomEmpty(socket.room)) {
+            // if room is empty delete it from session array
+            console.log("no one is in the room anymore.. Deleting room")
+            gameMap.set(socket.room, undefined);
+
+        } else {
+            if (socket.user === gameMap.get(socket.room).admin) {
+                console.log("admin left");
+                setNewRandomAdmin();
+            }
+            if (socket.room) {
+                io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
+                updateAndEmitUserListOfRoom(socket.room);
+            }
         }
-        if (socket.room) {
-            io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
-            updateAndEmitUserListOfRoom(socket.room);
-        }
+
     });
 
     socket.on('startGame', function () {
-        socket.game
         io.in(socket.room).emit('gameStarted');
     });
 
@@ -70,10 +87,9 @@ io.on('connection', (socket) => {
                 //set socket basic data
                 socket.room = data.room;
                 console.log(socket.user.name + " joined: " + socket.room);
-                socket.user.isAdmin = false;
 
                 socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
-                socket.emit('roomJoinSucceed', {room: socket.room, user: socket.user});
+                socket.emit('roomJoinSucceed', {room: socket.room, game: gameMap.get(socket.room)});
                 updateAndEmitUserListOfRoom(socket.room);
             });
 
@@ -94,36 +110,60 @@ io.on('connection', (socket) => {
         }
         else {
             socket.join(data.room, () => {
-                socket.user.isAdmin = true;
                 //set socket basic data
                 socket.room = data.room;
-                //set game data
-                socket.game = data.game;
 
                 console.log("emitting update user: " + JSON.stringify(socket.user))
                 socket.emit('updateUser', {user: socket.user});
-                socket.emit('roomCreated', {room: socket.room});
 
-                console.log(socket.room + " created!")
+                let game = {
+                    players: [],
+                    admin: socket.user,
+                    categories: data.categories,
+                    themes: data.themes,
+                    cardsPerGame: data.cardsPerGame,
+                    currentCard: {}
+                }
+
+                gameMap.set(data.room, game);
+                console.log(socket.room + " created!");
+
+                for (let [key, value] of gameMap) {
+                    console.log(key + " = " + value);
+                }
+
+                socket.emit('roomCreated', {room: socket.room, game: game});
+
             });
         }
     })
 
+
     socket.on('leaveRoom', () => {
         socket.leave(socket.room, () => {
             console.log(JSON.stringify(socket.user) + " left room " + socket.room);
-            if (!isRoomEmpty(socket.room) && socket.user.isAdmin) {
-                console.log("admin left");
-                setNewRandomAdmin();
-                socket.user.isAdmin = false;
-                socket.emit('updateUser', {user: socket.user});
+            if (isRoomEmpty(socket.room)) {
+                // if room is empty delete it from session array
+                console.log("no one is in the room anymore..")
+                gameMap.set(socket.room, undefined);
+            } else {
+                if (socket.user.isAdmin) {
+                    console.log("admin left");
+                    setNewRandomAdmin();
+                    socket.user.isAdmin = false;
+                    socket.emit('updateUser', {user: socket.user});
+                }
+
+                console.log("emit user change: " + socket.room)
+                io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
+
+
+                const room = socket.room;
+                socket.room = '';
+                updateAndEmitUserListOfRoom(room);
             }
 
-            console.log("emit user change: " + socket.room)
-            io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
-            const room = socket.room;
-            socket.room = '';
-            updateAndEmitUserListOfRoom(room);
+
         });
     })
 
