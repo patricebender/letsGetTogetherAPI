@@ -38,6 +38,7 @@ io.on('connection', (socket) => {
         return io.sockets.adapter.rooms[name] === undefined;
     }
 
+
     socket.on('disconnect', function () {
         console.log("Socket disconnects: " + JSON.stringify(socket.user))
 
@@ -45,13 +46,14 @@ io.on('connection', (socket) => {
             console.log("admin left");
             setNewRandomAdmin();
         }
-        if(socket.room){
+        if (socket.room) {
             io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
             updateAndEmitUserListOfRoom(socket.room);
         }
     });
 
     socket.on('startGame', function () {
+        socket.game
         io.in(socket.room).emit('gameStarted');
     });
 
@@ -95,8 +97,10 @@ io.on('connection', (socket) => {
                 socket.user.isAdmin = true;
                 //set socket basic data
                 socket.room = data.room;
+                //set game data
+                socket.game = data.game;
 
-                console.log("emitting update user: "+ JSON.stringify(socket.user))
+                console.log("emitting update user: " + JSON.stringify(socket.user))
                 socket.emit('updateUser', {user: socket.user});
                 socket.emit('roomCreated', {room: socket.room});
 
@@ -115,18 +119,17 @@ io.on('connection', (socket) => {
                 socket.emit('updateUser', {user: socket.user});
             }
 
-            console.log("emit user change: " + socket.room )
+            console.log("emit user change: " + socket.room)
             io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
             const room = socket.room;
             socket.room = '';
             updateAndEmitUserListOfRoom(room);
         });
-        })
-
+    })
 
 
     socket.on('requestUserList', () => {
-        console.log(socket.user.name + " requests user list")
+        console.log(socket.user + " requests user list");
         updateAndEmitUserListOfRoom(socket.room, "Only emit to requester");
     });
 
@@ -147,9 +150,28 @@ io.on('connection', (socket) => {
     })
 
     socket.on('setSocketUser', (data) => {
-        console.log("set socket user" + data.user.name)
+        console.log("set socket user " + JSON.stringify(data.user))
         socket.user = data.user;
-    })
+    });
+
+    socket.on('userNameChanged', (data) => {
+        console.log(JSON.stringify(socket.user.name) + " changes name to " + data.newName);
+        socket.user.name = data.newName;
+        //if socket is in room inform others about changes
+        if (socket.room) {
+            updateAndEmitUserListOfRoom(socket.room);
+        }
+    });
+
+    socket.on('avatarChanged', (data) => {
+        console.log(JSON.stringify(socket.user) + " changes avatar to " + data.newAvatar);
+        socket.user.avatar = data.newAvatar;
+        console.log(JSON.stringify(socket.user))
+        //if socket is in room inform others about changes
+        if (socket.room) {
+            updateAndEmitUserListOfRoom(socket.room);
+        }
+    });
 
 })
 ;
