@@ -15,12 +15,12 @@ let surveyCard = {
         {
             "title": "Kreativ",
             "voters": [],
-            "percent": 0
+            "answerCount": 0
         },
         {
             "title": "Genial",
             "voters": [],
-            "percent": 0
+            "answerCount": 0
         }
     ]
 }
@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
         survey.options.forEach((option) => {
             if (option.title === userAnswer) {
                 option.voters.push(socket.user);
-                option.answerCount = (option.voters.length / survey.answerCount) * 100
+                option.answerCount++;
             }
         });
 
@@ -95,13 +95,41 @@ io.on('connection', (socket) => {
                     survey.closed = true;
                     console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey))
 
+
+                    let firstOption = survey.options[0].voters.length;
+                    let secondOption = survey.options[1].voters.length;
+                    console.log(firstOption, secondOption)
+
+                    let losers = firstOption > secondOption?
+                        survey.options[1].voters :
+                        secondOption > firstOption ?
+                            survey.options[0].voters : [];
+
+
+
+                    console.log("LOSERS ARE: " + JSON.stringify(losers));
+
+                    let game = gameMap.get(socket.room);
+                    losers.forEach((loser) => {
+                        game.players.forEach((player) => {
+                            if(loser.name === player.name){
+                                player.sips += game.multiplier * player.multiplier * 1
+                                //TODO emit sip event
+                                socket.emit('updateUser', {user: player});
+                            }
+                        })
+                    })
+
                     // noinspection JSUnresolvedFunction
-                    io.in(socket.room).emit('surveyResults', {survey: survey});
+                    io.in(socket.room).emit('surveyResults', {survey: survey, losers: losers});
+                    updateAndEmitUserListOfRoom(socket.room)
 
                 } else {
                     console.log("Wait for users to answer: " + JSON.stringify(users))
                     // noinspection JSUnresolvedFunction
                     io.in(socket.room).emit('surveyUpdate', {survey: gameMap.get(socket.room).currentCard});
+
+
                 }
 
             })
@@ -110,6 +138,7 @@ io.on('connection', (socket) => {
             })
 
     });
+
 
     //returns all users who have not answered yet
     function waitForUsers() {
@@ -178,6 +207,8 @@ io.on('connection', (socket) => {
         if (!socket.user) return;
         let game = gameMap.get(socket.room);
 
+        game.cardsPlayed++;
+
 
         // reset user answers
         game.players.forEach((player) => {
@@ -192,6 +223,8 @@ io.on('connection', (socket) => {
             case 'Survey':
                 emitRandomSurvey();
         }
+
+        updateAndEmitUserListOfRoom(socket.room)
 
     });
 
@@ -244,8 +277,10 @@ io.on('connection', (socket) => {
                     categories: data.categories,
                     themes: data.themes,
                     cardsPerGame: data.cardsPerGame,
+                    cardsPlayed: 0,
                     currentCard: undefined,
-                    currentCategory: 'none'
+                    currentCategory: 'none',
+                    multiplier: 1
                 }
 
                 gameMap.set(data.room, game);
@@ -319,6 +354,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('userNameChanged', (data) => {
+        if (!socket.user) return;
         console.log(JSON.stringify(socket.user.name) + " changes name to " + data.newName);
         socket.user.name = data.newName;
         //if socket is in room inform others about changes
