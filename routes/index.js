@@ -5,7 +5,7 @@ let io = require('socket.io')(http);
 let gameMap = new Map();
 
 
-let surveyCard = {
+let firstSurvey = {
     category: 'survey',
     title: 'Template Survey',
     question: 'Lieber kreativ oder genial?',
@@ -25,7 +25,27 @@ let surveyCard = {
     ]
 }
 
-let surveys = [surveyCard]
+let secondSurvey = {
+    category: 'survey',
+    title: 'Reich und Hässlich vs. Arm und Schön',
+    question: 'Lieber Reich & Hässlich oder Arm & Schön?',
+    answerCount: 0,
+    closed: false,
+    options: [
+        {
+            "title": "Reich & Hässlich",
+            "voters": [],
+            "answerCount": 0
+        },
+        {
+            "title": "Arm & Schön",
+            "voters": [],
+            "answerCount": 0
+        }
+    ]
+}
+
+let surveys = [firstSurvey, secondSurvey]
 
 
 io.on('connection', (socket) => {
