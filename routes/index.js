@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
         socket.user.hasAnswered = true;
         survey.answerCount++;
 
-        console.log(socket.user.name + " answered " + data['surveyTitle'] + " \n with option: " + data['answer'] + " \n" +
+        console.log(JSON.stringify(socket.user) + " answered " + data['surveyTitle'] + " \n with option: " + data['answer'] + " \n" +
             "in room: " + socket.room)
 
         // add user answer to currentCard in game
@@ -112,10 +112,12 @@ io.on('connection', (socket) => {
                     let game = gameMap.get(socket.room);
                     losers.forEach((loser) => {
                         game.players.forEach((player) => {
-                            if(loser.name === player.name){
+                            if(loser.socketId === player.socketId){
                                 player.sips += game.multiplier * player.multiplier * 1
                                 //TODO emit sip event
-                                io.to(loser.socketId).emit('updateUser', {user: loser});
+                                console.log("Emitting sips to: " + JSON.stringify(player))
+
+                                io.to(player.socketId).emit('updateUser', {user: player});
                             }
                         })
                     })
@@ -230,9 +232,6 @@ io.on('connection', (socket) => {
 
 
     socket.on('joinRoomRequest', (data) => {
-        socket.user = data.user;
-
-
         console.log(socket.user.name + " want's to join " + data.room)
 
         //room already exists, so join it
