@@ -1,36 +1,16 @@
+
 let app = require('express')();
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 
 let gameMap = new Map();
 
-
-let surveyCard = {
-    category: 'survey',
-    title: 'Template Survey',
-    question: 'Lieber kreativ oder genial?',
-    answerCount: 0,
-    closed: false,
-    options: [
-        {
-            "title": "Kreativ",
-            "voters": [],
-            "answerCount": 0
-        },
-        {
-            "title": "Genial",
-            "voters": [],
-            "answerCount": 0
-        }
-    ]
-}
-
-let surveys = [surveyCard]
+let surveys = require('./surveys');;
 
 
 io.on('connection', (socket) => {
 
-    let updateAndEmitUserListOfRoom = function (room, emitToSocket) {
+    let updateAndEmitGame = function (room, emitToSocket) {
 
         if (!socket.user) return;
 
@@ -63,7 +43,6 @@ io.on('connection', (socket) => {
         let game = gameMap.get(socket.room);
         // make object copy rather than creating reference to it
         game.currentCard = JSON.parse(JSON.stringify(survey))
-        game.currentCategory = 'survey';
         console.log("emitting survey to " + socket.room);
         io.in(socket.room).emit('newSurvey', {survey: game.currentCard});
     };
@@ -77,7 +56,7 @@ io.on('connection', (socket) => {
         socket.user.hasAnswered = true;
         survey.answerCount++;
 
-        console.log(JSON.stringify(socket.user) + " answered " + data['surveyTitle'] + " \n with option: " + data['answer'] + " \n" +
+        console.log(JSON.stringify(socket.user) + " answered " + data['survey'].question + " \n with option: " + data['answer'] + " \n" +
             "in room: " + socket.room)
 
         // add user answer to currentCard in game
@@ -100,11 +79,10 @@ io.on('connection', (socket) => {
                     let secondOption = survey.options[1].voters.length;
                     console.log(firstOption, secondOption)
 
-                    let losers = firstOption > secondOption?
+                    let losers = firstOption > secondOption ?
                         survey.options[1].voters :
                         secondOption > firstOption ?
                             survey.options[0].voters : [];
-
 
 
                     console.log("LOSERS ARE: " + JSON.stringify(losers));
@@ -112,7 +90,7 @@ io.on('connection', (socket) => {
                     let game = gameMap.get(socket.room);
                     losers.forEach((loser) => {
                         game.players.forEach((player) => {
-                            if(loser.socketId === player.socketId){
+                            if (loser.socketId === player.socketId) {
                                 player.sips += game.multiplier * player.multiplier * 1
                                 //TODO emit sip event
                                 console.log("Emitting sips to: " + JSON.stringify(player))
@@ -124,7 +102,7 @@ io.on('connection', (socket) => {
 
                     // noinspection JSUnresolvedFunction
                     io.in(socket.room).emit('surveyResults', {survey: survey, losers: losers});
-                    updateAndEmitUserListOfRoom(socket.room)
+                    updateAndEmitGame(socket.room)
 
                 } else {
                     console.log("Wait for users to answer: " + JSON.stringify(users))
@@ -193,7 +171,7 @@ io.on('connection', (socket) => {
             }
             if (socket.room) {
                 io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
-                updateAndEmitUserListOfRoom(socket.room);
+                updateAndEmitGame(socket.room);
 
             }
         }
@@ -222,16 +200,22 @@ io.on('connection', (socket) => {
         const randomCategory = game.categories[Math.floor(Math.random() * game.categories.length)].name;
 
         switch (randomCategory) {
-            case 'Survey':
+
+            case 'Umfrage':
+                game.currentCategory = 'Umfrage';
                 emitRandomSurvey();
+                break;
+            default:
+                console.log(randomCategory + " not yet implemented!");
         }
 
-        updateAndEmitUserListOfRoom(socket.room)
+        updateAndEmitGame(socket.room)
 
     });
 
 
     socket.on('joinRoomRequest', (data) => {
+        if (!socket.user) return;
         console.log(socket.user.name + " want's to join " + data.room)
 
         //room already exists, so join it
@@ -243,7 +227,7 @@ io.on('connection', (socket) => {
 
                 socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
                 socket.emit('roomJoinSucceed', {room: socket.room, game: gameMap.get(socket.room)});
-                updateAndEmitUserListOfRoom(socket.room);
+                updateAndEmitGame(socket.room);
             });
 
         }
@@ -255,7 +239,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createRoomRequest', (data) => {
-
+        if (!socket.user) return;
         console.log(JSON.stringify(socket.user) + " want's to create " + data.room);
 
         if (!isRoomEmpty(data.room)) {
@@ -318,7 +302,7 @@ io.on('connection', (socket) => {
 
                 const room = socket.room;
                 socket.room = '';
-                updateAndEmitUserListOfRoom(room);
+                updateAndEmitGame(room);
             }
 
 
@@ -328,7 +312,7 @@ io.on('connection', (socket) => {
 
     socket.on('requestUserList', () => {
         console.log(socket.user + " requests user list");
-        updateAndEmitUserListOfRoom(socket.room, "Only emit to requester");
+        updateAndEmitGame(socket.room, "Only emit to requester");
     });
 
     socket.on('requestAvatarList', () => {
@@ -359,7 +343,7 @@ io.on('connection', (socket) => {
         socket.user.name = data.newName;
         //if socket is in room inform others about changes
         if (socket.room) {
-            updateAndEmitUserListOfRoom(socket.room);
+            updateAndEmitGame(socket.room);
         }
     });
 
@@ -369,8 +353,22 @@ io.on('connection', (socket) => {
         console.log(JSON.stringify(socket.user))
         //if socket is in room inform others about changes
         if (socket.room) {
-            updateAndEmitUserListOfRoom(socket.room);
+            updateAndEmitGame(socket.room);
         }
+    });
+
+    socket.on('categoriesChanged', (data) => {
+        if (!socket.user || !socket.room) return;
+        console.log("Categories in " + socket.room + " changed to: " + JSON.stringify(data.categories));
+        gameMap.get(socket.room).categories = data.categories;
+        updateAndEmitGame(socket.room);
+    });
+
+    socket.on('themesChanged', (data) => {
+        if (!socket.user || !socket.room) return;
+        console.log("Themes in " + socket.room + " changed to: " + JSON.stringify(data.themes));
+        gameMap.get(socket.room).themes = data.themes;
+        updateAndEmitGame(socket.room);
     });
 
 })
