@@ -20,18 +20,19 @@
     <session id="-1583087510">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="15" />
+          <entry key="project.closed" value="16" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.11" value="1" />
-          <entry key="project.open.time.13" value="4" />
+          <entry key="project.open.time.13" value="5" />
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.16" value="3" />
           <entry key="project.open.time.17" value="1" />
           <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.7" value="3" />
+          <entry key="project.open.time.8" value="1" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="17" />
+          <entry key="project.opened" value="19" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -50,12 +51,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="js" value="11771" />
+          <entry key="js" value="11841" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JavaScript" value="11771" />
+          <entry key="JavaScript" value="11841" />
         </counts>
       </usages-collector>
     </session>
@@ -65,8 +66,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="107" lean-forward="true" selection-start-line="107" selection-end-line="107" />
+            <state relative-caret-position="404">
+              <caret line="115" column="86" lean-forward="true" selection-start-line="115" selection-start-column="86" selection-end-line="115" selection-end-column="86" />
             </state>
           </provider>
         </entry>
@@ -88,6 +89,7 @@
       <find>console.log</find>
       <find>newCard</find>
       <find>Game</find>
+      <find>user =</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -129,7 +131,7 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
-    <option name="width" value="629" />
+    <option name="width" value="1680" />
     <option name="height" value="1050" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -138,7 +140,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -161,13 +162,14 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542666150083" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542705750972" />
     <property name="javascript.nodejs.core.library.configured.version" value="8.11.4" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.jscs" value="true" />
@@ -228,12 +230,14 @@
       <workItem from="1542386855246" duration="3833000" />
       <workItem from="1542467224895" duration="3245000" />
       <workItem from="1542531322819" duration="32207000" />
-      <workItem from="1542642942135" duration="8077000" />
+      <workItem from="1542642942135" duration="8790000" />
+      <workItem from="1542705978837" duration="161000" />
+      <workItem from="1542706176272" duration="1424000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="115728000" />
+    <option name="totallyTimeSpent" value="118026000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -245,11 +249,11 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="878" height="1050" extended-state="6" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49805447" visible="true" weight="0.33133972" />
-      <window_info id="Structure" order="1" sideWeight="0.5019455" side_tool="true" visible="true" weight="0.33133972" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49546045" visible="true" weight="0.16239317" />
+      <window_info id="Structure" order="1" sideWeight="0.50453955" side_tool="true" weight="0.24652456" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="4" />
@@ -321,8 +325,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="107" lean-forward="true" selection-start-line="107" selection-end-line="107" />
+        <state relative-caret-position="404">
+          <caret line="115" column="86" lean-forward="true" selection-start-line="115" selection-start-column="86" selection-end-line="115" selection-end-column="86" />
         </state>
       </provider>
     </entry>

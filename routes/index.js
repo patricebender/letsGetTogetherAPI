@@ -115,7 +115,7 @@ io.on('connection', (socket) => {
                             if(loser.name === player.name){
                                 player.sips += game.multiplier * player.multiplier * 1
                                 //TODO emit sip event
-                                socket.emit('updateUser', {user: player});
+                                io.to(loser.socketId).emit('updateUser', {user: loser});
                             }
                         })
                     })
@@ -256,7 +256,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createRoomRequest', (data) => {
-        socket.user = data.user;
+
         console.log(JSON.stringify(socket.user) + " want's to create " + data.room);
 
         if (!isRoomEmpty(data.room)) {
@@ -349,8 +349,9 @@ io.on('connection', (socket) => {
     })
 
     socket.on('setSocketUser', (data) => {
-        console.log("set socket user " + JSON.stringify(data.user))
         socket.user = data.user;
+        socket.user.socketId = socket.id;
+
     });
 
     socket.on('userNameChanged', (data) => {
