@@ -43,7 +43,6 @@ io.on('connection', (socket) => {
         let game = gameMap.get(socket.room);
         // make object copy rather than creating reference to it
         game.currentCard = JSON.parse(JSON.stringify(survey))
-        game.currentCategory = 'survey';
         console.log("emitting survey to " + socket.room);
         io.in(socket.room).emit('newSurvey', {survey: game.currentCard});
     };
@@ -201,7 +200,9 @@ io.on('connection', (socket) => {
         const randomCategory = game.categories[Math.floor(Math.random() * game.categories.length)].name;
 
         switch (randomCategory) {
-            case 'Survey':
+
+            case 'Umfrage':
+                game.currentCategory = 'Umfrage';
                 emitRandomSurvey();
                 break;
             default:

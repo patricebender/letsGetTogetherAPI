@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/routes/index.js" line="59" mnemonic="7" />
+    <bookmark url="file://$PROJECT_DIR$/routes/index.js" line="58" mnemonic="7" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7c93065c-5b4c-41cc-b2d4-daad45149978" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/routes/surveys.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/users.js" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -53,31 +50,31 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="js" value="14279" />
+          <entry key="js" value="14299" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JavaScript" value="14279" />
+          <entry key="JavaScript" value="14299" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="240" column="33" selection-start-line="240" selection-start-column="33" selection-end-line="240" selection-end-column="33" />
+            <state relative-caret-position="-4389">
+              <caret line="50" column="49" lean-forward="true" selection-start-line="50" selection-start-column="49" selection-end-line="50" selection-end-column="49" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/surveys.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="606">
+            <state relative-caret-position="501">
               <caret line="408" column="29" lean-forward="true" selection-start-line="408" selection-start-column="29" selection-end-line="408" selection-end-column="29" />
             </state>
           </provider>
@@ -105,6 +102,8 @@
       <find>cardreq</find>
       <find>importe</find>
       <find>.title</find>
+      <find>geld</find>
+      <find>categories</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -114,8 +113,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/routes/surveys.json" />
-        <option value="$PROJECT_DIR$/routes/index.js" />
         <option value="$PROJECT_DIR$/routes/surveys.js" />
+        <option value="$PROJECT_DIR$/routes/index.js" />
       </list>
     </option>
   </component>
@@ -187,7 +186,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542746580117" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542748618520" />
     <property name="javascript.nodejs.core.library.configured.version" value="8.11.4" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.jscs" value="true" />
@@ -250,12 +249,12 @@
       <workItem from="1542531322819" duration="32207000" />
       <workItem from="1542642942135" duration="8790000" />
       <workItem from="1542705978837" duration="161000" />
-      <workItem from="1542706176272" duration="12429000" />
+      <workItem from="1542706176272" duration="13871000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="129031000" />
+    <option name="totallyTimeSpent" value="130473000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -268,7 +267,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="942" height="1050" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49546045" visible="true" weight="0.29555556" />
       <window_info id="Structure" order="1" sideWeight="0.50453955" side_tool="true" weight="0.24652456" />
@@ -351,17 +349,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/index.js">
+    <entry file="file://$PROJECT_DIR$/routes/surveys.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="240" column="33" selection-start-line="240" selection-start-column="33" selection-end-line="240" selection-end-column="33" />
+        <state relative-caret-position="501">
+          <caret line="408" column="29" lean-forward="true" selection-start-line="408" selection-start-column="29" selection-end-line="408" selection-end-column="29" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/surveys.js">
+    <entry file="file://$PROJECT_DIR$/routes/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="606">
-          <caret line="408" column="29" lean-forward="true" selection-start-line="408" selection-start-column="29" selection-end-line="408" selection-end-column="29" />
+        <state relative-caret-position="-4389">
+          <caret line="50" column="49" lean-forward="true" selection-start-line="50" selection-start-column="49" selection-end-line="50" selection-end-column="49" />
         </state>
       </provider>
     </entry>
