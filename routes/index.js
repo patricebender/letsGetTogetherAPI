@@ -1,11 +1,11 @@
-
 let app = require('express')();
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 
 let gameMap = new Map();
 
-let surveys = require('./surveys');;
+let surveys = require('./surveys');
+let guesses = require('./guess');
 
 
 io.on('connection', (socket) => {
@@ -36,15 +36,61 @@ io.on('connection', (socket) => {
 
         })
     }
+    let emitRandomGuess = function () {
+        let guess = guesses[Math.floor(Math.random() * guesses.length)];
+        let game = gameMap.get(socket.room);
+        // make object copy rather than creating reference to it
+        game.currentCard = JSON.parse(JSON.stringify(guess));
+        console.log("emitting guess to " + socket.room);
+        io.in(socket.room).emit('newCard', {card: game.currentCard});
+
+    }
+
+
+    socket.on('guessAnswer', (data) => {
+        if (!socket.user || !socket.room) return;
+        let game = gameMap.get(socket.room);
+        let guess = game.currentCard;
+
+        let userAnswer = data['answer'];
+
+        socket.user.hasAnswered = true;
+        guess.answerCount++;
+
+        console.log(JSON.stringify(socket.user) + " answered " + guess.question + " \n with guess: " + userAnswer + " \n" +
+            "in room: " + socket.room)
+
+        // add user answer to currentCard in game
+        guess.ranking.push({answer: userAnswer, player: socket.user});
+
+        waitForUsers().then((users) => {
+            if (users.length === 0) {
+                //close guess
+                guess.closed = true;
+                console.log("Everyone has answered. Emitting Results for Guess: " + JSON.stringify(guess))
+
+                // noinspection JSUnresolvedFunction
+                io.in(socket.room).emit('guessResults', {guess: guess, ranking: guess.ranking});
+                updateAndEmitGame(socket.room)
+            } else {
+                console.log("Wait for users to answer: " + JSON.stringify(users))
+                // noinspection JSUnresolvedFunction
+                io.in(socket.room).emit('guessUpdate', {guess: gameMap.get(socket.room).currentCard});
+
+
+            }
+        })
+
+    });
 
 
     let emitRandomSurvey = function () {
         let survey = surveys[Math.floor(Math.random() * surveys.length)];
         let game = gameMap.get(socket.room);
         // make object copy rather than creating reference to it
-        game.currentCard = JSON.parse(JSON.stringify(survey))
+        game.currentCard = JSON.parse(JSON.stringify(survey));
         console.log("emitting survey to " + socket.room);
-        io.in(socket.room).emit('newSurvey', {survey: game.currentCard});
+        io.in(socket.room).emit('newCard', {card: game.currentCard});
     };
 
     socket.on('surveyAnswer', (data) => {
@@ -204,6 +250,10 @@ io.on('connection', (socket) => {
             case 'Umfrage':
                 game.currentCategory = 'Umfrage';
                 emitRandomSurvey();
+                break;
+            case 'Schätzen':
+                game.currentCategory = 'Schätzen'
+                emitRandomGuess();
                 break;
             default:
                 console.log(randomCategory + " not yet implemented!");
