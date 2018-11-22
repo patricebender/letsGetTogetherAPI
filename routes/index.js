@@ -1,11 +1,11 @@
-
 let app = require('express')();
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 
 let gameMap = new Map();
 
-let surveys = require('./surveys');;
+let surveys = require('./surveys');
+let guesses = require('./guess');
 
 
 io.on('connection', (socket) => {
@@ -30,10 +30,128 @@ io.on('connection', (socket) => {
             if (emitToSocket) {
                 socket.emit('gameUpdate', {game: gameMap.get(room)});
             } else {
-                console.log("emitting game: " + JSON.stringify(gameMap.get(room)));
+                // console.log("emitting game: " + JSON.stringify(gameMap.get(room)));
                 io.in(room).emit('gameUpdate', {game: gameMap.get(room)});
             }
 
+        })
+    }
+    let emitRandomGuess = function () {
+        let guess = guesses[Math.floor(Math.random() * guesses.length)];
+        let game = gameMap.get(socket.room);
+        // make object copy rather than creating reference to it
+        game.currentCard = JSON.parse(JSON.stringify(guess));
+        console.log("emitting guess to " + socket.room);
+        io.in(socket.room).emit('newCard', {card: game.currentCard});
+    }
+
+    let compareGuessAnswer = function (rankingA, rankingB) {
+        //compare absolute difference to correct answer for sorting
+        diffAbsA = rankingA.difference;
+        diffAbsB = rankingB.difference;
+
+        if (diffAbsA < diffAbsB) return -1;
+        if (diffAbsB < diffAbsA) return 1;
+
+        return 0;
+
+    }
+
+
+    socket.on('guessAnswer', (data) => {
+        if (!socket.user || !socket.room) return;
+        let game = gameMap.get(socket.room);
+        let guess = game.currentCard;
+
+        let userAnswer = data['answer'];
+
+        socket.user.hasAnswered = true;
+        guess.answerCount++;
+
+        console.log(JSON.stringify(socket.user.name) + " answered " + guess.question + " \n with guess: " + userAnswer);
+
+        let diff = Math.abs(userAnswer - guess.answer);
+        // add user answer to currentCard in game
+        guess.ranking.push({answer: userAnswer, player: socket.user, difference: diff, rankNumber: 0, sips: 0});
+
+        waitForUsers().then((users) => {
+            if (users.length === 0) {
+                //close guess
+                guess.closed = true;
+                console.log("Everyone has answered. Sort Ranking and emit results for Guess: " + JSON.stringify(guess.question))
+                guess.ranking.sort(compareGuessAnswer);
+
+                // big groups should drink more e.g. for 10 player I want the last two to drink.
+                let howManyDrink = guess.answerCount / 5 < 1 ? 1 : Math.floor(guess.answerCount / 5);
+                console.log(howManyDrink + " drink!")
+
+
+                //find last n players with baddest guess
+                let rank = 1;
+                guess.ranking.forEach((answer, index) => {
+                    //last index reached
+                    if (!guess.ranking[index + 1]) {
+                        answer.rankNumber = rank;
+                    } else {
+                        //same rank for same difference so don't increase rank count
+                        if (answer.difference === guess.ranking[index + 1].difference) {
+                            answer.rankNumber = rank;
+                        } else {
+                            answer.rankNumber = rank;
+                            rank++;
+                        }
+                    }
+                });
+
+                // calculate sips
+                let ranking = guess.ranking;
+                let i = ranking.length - 1;
+                while (howManyDrink > 0 && i > 0) {
+                    // both drink
+                    if (ranking[i].rankNumber === ranking[i - 1].rankNumber) {
+                        ranking[i].sips = ranking[i].player.multiplier * game.multiplier * 1;
+                        emitSipsTo(ranking[i].player.socketId);
+                        // if the two got the first rank and there still need to be sipped, sip.
+                        if (i === 1) {
+                            console.log("also emit to first one: " + JSON.stringify(ranking[i - 1].player));
+                            ranking[i - 1].sips = ranking[i - 1].player.multiplier * game.multiplier * 1;
+                            emitSipsTo(ranking[i - 1].player.socketId);
+                        }
+
+                    } else {
+                        ranking[i].sips = ranking[i].player.multiplier * game.multiplier * 1;
+                        emitSipsTo(ranking[i].player.socketId);
+                        howManyDrink--;
+                    }
+                    i--;
+                }
+
+
+                // noinspection JSUnresolvedFunction
+                io.in(socket.room).emit('guessResults', {guess: guess, ranking: guess.ranking});
+                updateAndEmitGame(socket.room)
+            } else {
+                console.log("Wait for users to answer: " + JSON.stringify(users))
+                // noinspection JSUnresolvedFunction
+                io.in(socket.room).emit('guessUpdate', {guess: gameMap.get(socket.room).currentCard});
+
+
+            }
+        })
+
+    });
+
+
+    let emitSipsTo = function (socketId) {
+
+        let game = gameMap.get(socket.room);
+        game.players.forEach((player) => {
+            if (socketId === player.socketId) {
+                player.sips += game.multiplier * player.multiplier * 1
+                //TODO emit sip event
+                console.log("Emitting sips to: " + JSON.stringify(player))
+                io.to(player.socketId).emit('updateUser', {user: player});
+            }
         })
     }
 
@@ -42,9 +160,9 @@ io.on('connection', (socket) => {
         let survey = surveys[Math.floor(Math.random() * surveys.length)];
         let game = gameMap.get(socket.room);
         // make object copy rather than creating reference to it
-        game.currentCard = JSON.parse(JSON.stringify(survey))
+        game.currentCard = JSON.parse(JSON.stringify(survey));
         console.log("emitting survey to " + socket.room);
-        io.in(socket.room).emit('newSurvey', {survey: game.currentCard});
+        io.in(socket.room).emit('newCard', {card: game.currentCard});
     };
 
     socket.on('surveyAnswer', (data) => {
@@ -87,17 +205,8 @@ io.on('connection', (socket) => {
 
                     console.log("LOSERS ARE: " + JSON.stringify(losers));
 
-                    let game = gameMap.get(socket.room);
                     losers.forEach((loser) => {
-                        game.players.forEach((player) => {
-                            if (loser.socketId === player.socketId) {
-                                player.sips += game.multiplier * player.multiplier * 1
-                                //TODO emit sip event
-                                console.log("Emitting sips to: " + JSON.stringify(player))
-
-                                io.to(player.socketId).emit('updateUser', {user: player});
-                            }
-                        })
+                        emitSipsTo(loser.socketId);
                     })
 
                     // noinspection JSUnresolvedFunction
@@ -204,6 +313,10 @@ io.on('connection', (socket) => {
             case 'Umfrage':
                 game.currentCategory = 'Umfrage';
                 emitRandomSurvey();
+                break;
+            case 'Schätzen':
+                game.currentCategory = 'Schätzen'
+                emitRandomGuess();
                 break;
             default:
                 console.log(randomCategory + " not yet implemented!");
@@ -332,9 +445,10 @@ io.on('connection', (socket) => {
     })
 
     socket.on('setSocketUser', (data) => {
+        console.log("set socket user " + data.user, socket.id)
         socket.user = data.user;
         socket.user.socketId = socket.id;
-
+        io.to(socket.id).emit('updateUser', {user: socket.user});
     });
 
     socket.on('userNameChanged', (data) => {
