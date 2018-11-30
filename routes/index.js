@@ -7,7 +7,8 @@ let gameMap = new Map();
 
 let cards = {}
 cards['surveys'] = require('./surveys');
-cards['guess'] = require('./guess');
+cards['guess'] = require('./guesses');
+console.log("Survey Count: " + cards['surveys'].length, "Guess Count:" + cards['guess'].length)
 
 io.on('connection', (socket) => {
 
@@ -31,13 +32,12 @@ io.on('connection', (socket) => {
             if (emitToSocket) {
                 socket.emit('gameUpdate', {game: gameMap.get(room)});
             } else {
-                // console.log("emitting game: " + JSON.stringify(gameMap.get(room)));
                 io.in(room).emit('gameUpdate', {game: gameMap.get(room)});
             }
 
         })
     }
-   compareGuessAnswer = function (rankingA, rankingB) {
+    compareGuessAnswer = function (rankingA, rankingB) {
         //compare absolute difference to correct answer for sorting
         diffAbsA = rankingA.difference;
         diffAbsB = rankingB.difference;
@@ -133,6 +133,11 @@ io.on('connection', (socket) => {
 
     });
 
+    emitGameHasEnded = function (reason) {
+        gameMap.get(socket.room).isOver = true;
+        io.in(room).emit('gameHasEnded', {game: gameMap.get(room)});
+    }
+
 
     let emitSipsTo = function (socketId) {
 
@@ -151,7 +156,7 @@ io.on('connection', (socket) => {
         if (!socket.user || !socket.room) return;
         let game = gameMap.get(socket.room);
 
-        if(game.categories.length > 0){
+        if (game.categories.length > 0) {
 
             let categoryIndex = Math.floor(Math.random() * game.categories.length);
             const randomCategory = game.categories[categoryIndex].type;
@@ -185,7 +190,7 @@ io.on('connection', (socket) => {
                 io.in(socket.room).emit('newCard', {card: game.currentCard});
             }
 
-        }else{
+        } else {
             console.log("\n no cards left..");
         }
 
@@ -381,14 +386,16 @@ io.on('connection', (socket) => {
 
                 socket.emit('updateUser', {user: socket.user});
 
+
                 let game = {
                     players: [],
+                    isOver: false,
                     admin: socket.user,
                     categories: data.categories,
                     themes: data.themes,
                     cardsPerGame: data.cardsPerGame,
                     cardsPlayed: 0,
-                    cards:  JSON.parse(JSON.stringify(cards)),
+                    cards: JSON.parse(JSON.stringify(cards)),
                     currentCard: {},
                     currentCategory: 'none',
                     multiplier: 1
