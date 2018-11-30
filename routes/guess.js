@@ -20,7 +20,7 @@ module.exports = [
 {
     category: 'guess',
     question: 'Wie lang ist der Begattungsapparat der 15 cm langen Bananenschnecke?',
-    answer: 15,
+    answer: 80,
     answerCount: 0,
     unit: 'cm',
     closed: false,
@@ -46,7 +46,7 @@ module.exports = [
 },
 {
     category: 'guess',
-    question: 'Wieviele Stunden Videomaterial werden pro Minuet weltweit bei youtube hochgeladen?',
+    question: 'Wieviele Stunden Videomaterial werden pro Minute weltweit bei youtube hochgeladen?',
     answer: 48,
     answerCount: 0,
     unit: 'Stunden',
@@ -73,15 +73,6 @@ module.exports = [
 },
 {
       category: 'guess',
-      question: 'Wie viele Jahre würde es dauern, die Distanz zwischen der Erde und der Sonne zu Fuss zurückzulegen?',
-      answer: 3425,
-      answerCount: 0,
-      unit: 'Jahre',
-      closed: false,
-      ranking: []
-},
-{
-      category: 'guess',
       question: 'Wie viele Weihnachtsbäume werden in Deutschland pro Jahr verkauft?',
       answer: 29.3,
       answerCount: 0,
@@ -94,7 +85,7 @@ module.exports = [
       question: 'Wie viele Tankstellen gibt es in Deutschland??',
       answer: 14.562,
       answerCount: 0,
-      unit: 'Bäume (in Millionen)',
+      unit: 'Tankstellen',
       closed: false,
       ranking: []
 }

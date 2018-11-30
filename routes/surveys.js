@@ -50,24 +50,7 @@ module.exports = [{
                 "answerCount": 0
             }
         ]
-    }, {
-        category: 'survey',
-        question: 'Doppelkinn oder Bierbauch?',
-        answerCount: 0,
-        closed: false,
-        options: [
-            {
-                "title": "Doppelkinn",
-                "voters": [],
-                "answerCount": 0
-            },
-            {
-                "title": "Bierbauch",
-                "voters": [],
-                "answerCount": 0
-            }
-        ]
-    }, {
+    },{
         category: 'survey',
         question: 'Doppelkinn oder Bierbauch?',
         answerCount: 0,
@@ -190,7 +173,7 @@ module.exports = [{
         ]
     }, {
         category: 'survey',
-        question: 'Spaß im Job aber kein Geld oder Kein Spaß im Job aber kein Geld?',
+        question: 'Spaß im Job aber kein Geld oder Spaß im Job aber kein Geld?',
         answerCount: 0,
         closed: false,
         options: [

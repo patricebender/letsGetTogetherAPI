@@ -4,9 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/routes/index.js" line="174" mnemonic="7" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7c93065c-5b4c-41cc-b2d4-daad45149978" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/routes/guess.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/guess.js" afterDir="false" />
-    </list>
+    <list default="true" id="7c93065c-5b4c-41cc-b2d4-daad45149978" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/node_modules/" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -253,12 +251,12 @@
       <workItem from="1542815127807" duration="695000" />
       <workItem from="1542829072435" duration="5192000" />
       <workItem from="1542835238466" duration="2476000" />
-      <workItem from="1542881512780" duration="12761000" />
+      <workItem from="1542881512780" duration="13085000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="151597000" />
+    <option name="totallyTimeSpent" value="151921000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
