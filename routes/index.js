@@ -4,9 +4,11 @@ let io = require('socket.io')(http);
 
 let gameMap = new Map();
 
-let surveys = require('./surveys');
-let guesses = require('./guess');
 
+let cards = {}
+cards['surveys'] = require('./surveys');
+cards['guess'] = require('./guesses');
+console.log("Survey Count: " + cards['surveys'].length, "Guess Count:" + cards['guess'].length)
 
 io.on('connection', (socket) => {
 
@@ -30,22 +32,12 @@ io.on('connection', (socket) => {
             if (emitToSocket) {
                 socket.emit('gameUpdate', {game: gameMap.get(room)});
             } else {
-                // console.log("emitting game: " + JSON.stringify(gameMap.get(room)));
                 io.in(room).emit('gameUpdate', {game: gameMap.get(room)});
             }
 
         })
     }
-    let emitRandomGuess = function () {
-        let guess = guesses[Math.floor(Math.random() * guesses.length)];
-        let game = gameMap.get(socket.room);
-        // make object copy rather than creating reference to it
-        game.currentCard = JSON.parse(JSON.stringify(guess));
-        console.log("emitting guess to " + socket.room);
-        io.in(socket.room).emit('newCard', {card: game.currentCard});
-    }
-
-    let compareGuessAnswer = function (rankingA, rankingB) {
+    compareGuessAnswer = function (rankingA, rankingB) {
         //compare absolute difference to correct answer for sorting
         diffAbsA = rankingA.difference;
         diffAbsB = rankingB.difference;
@@ -141,6 +133,11 @@ io.on('connection', (socket) => {
 
     });
 
+    emitGameHasEnded = function (reason) {
+        gameMap.get(socket.room).isOver = true;
+        io.in(room).emit('gameHasEnded', {game: gameMap.get(room)});
+    }
+
 
     let emitSipsTo = function (socketId) {
 
@@ -155,15 +152,50 @@ io.on('connection', (socket) => {
         })
     }
 
-
-    let emitRandomSurvey = function () {
-        let survey = surveys[Math.floor(Math.random() * surveys.length)];
+    let emitRandomCard = function () {
+        if (!socket.user || !socket.room) return;
         let game = gameMap.get(socket.room);
-        // make object copy rather than creating reference to it
-        game.currentCard = JSON.parse(JSON.stringify(survey));
-        console.log("emitting survey to " + socket.room);
-        io.in(socket.room).emit('newCard', {card: game.currentCard});
+
+        if (game.categories.length > 0) {
+
+            let categoryIndex = Math.floor(Math.random() * game.categories.length);
+            const randomCategory = game.categories[categoryIndex].type;
+
+            switch (randomCategory) {
+                case 'surveys':
+                    game.currentCategory = 'surveys';
+                    break;
+                case 'guess':
+                    game.currentCategory = 'guess';
+                    break;
+                default:
+                    console.log(randomCategory + " not yet implemented!");
+
+            }
+
+            console.log("\n cards left: " + JSON.stringify(game.cards));
+            let cards = game.cards[game.currentCategory];
+
+            // no more cards in current category
+            if (cards.length === 0) {
+                console.log("\n No more " + game.currentCategory + " deleting category.." + game.categories.splice(categoryIndex, 1));
+
+
+                // recursive call for card of other category
+                emitRandomCard();
+            } else {
+                let card = cards.splice(Math.floor(Math.random() * cards.length), 1)[0];
+                console.log("emitting " + JSON.stringify(card.category) + " to " + socket.room);
+                game.currentCard = card;
+                io.in(socket.room).emit('newCard', {card: game.currentCard});
+            }
+
+        } else {
+            console.log("\n no cards left..");
+        }
+
     };
+
 
     socket.on('surveyAnswer', (data) => {
         if (!socket.user || !socket.room) return;
@@ -296,6 +328,7 @@ io.on('connection', (socket) => {
         if (!socket.user) return;
         let game = gameMap.get(socket.room);
 
+
         game.cardsPlayed++;
 
 
@@ -304,23 +337,9 @@ io.on('connection', (socket) => {
             player.hasAnswered = false;
         });
 
-        console.log(JSON.stringify(socket.user) + " requests new Card");
+        console.log(JSON.stringify(socket.user.name) + " requests new Card");
 
-        const randomCategory = game.categories[Math.floor(Math.random() * game.categories.length)].name;
-
-        switch (randomCategory) {
-
-            case 'Umfrage':
-                game.currentCategory = 'Umfrage';
-                emitRandomSurvey();
-                break;
-            case 'Schätzen':
-                game.currentCategory = 'Schätzen'
-                emitRandomGuess();
-                break;
-            default:
-                console.log(randomCategory + " not yet implemented!");
-        }
+        emitRandomCard();
 
         updateAndEmitGame(socket.room)
 
@@ -367,14 +386,17 @@ io.on('connection', (socket) => {
 
                 socket.emit('updateUser', {user: socket.user});
 
+
                 let game = {
                     players: [],
+                    isOver: false,
                     admin: socket.user,
                     categories: data.categories,
                     themes: data.themes,
                     cardsPerGame: data.cardsPerGame,
                     cardsPlayed: 0,
-                    currentCard: undefined,
+                    cards: JSON.parse(JSON.stringify(cards)),
+                    currentCard: {},
                     currentCategory: 'none',
                     multiplier: 1
                 }
