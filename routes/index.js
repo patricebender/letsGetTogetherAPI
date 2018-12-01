@@ -19,7 +19,7 @@ io.on('connection', (socket) => {
 
     let updateAndEmitGame = function (room, emitToSocket) {
 
-        if (!socket.user) return;
+        if (!socket.user || !room) return;
 
         io.in(room).clients((error, clients) => {
             if (error) throw error;
@@ -138,10 +138,6 @@ io.on('connection', (socket) => {
 
     });
 
-    emitGameHasEnded = function (reason) {
-        gameMap.get(socket.room).isOver = true;
-        io.in(room).emit('gameHasEnded', {game: gameMap.get(room)});
-    }
 
 
     let emitSipsTo = function (socketId) {
@@ -189,6 +185,7 @@ io.on('connection', (socket) => {
                 // recursive call for card of other category
                 emitRandomCard();
             } else {
+                // remove and retrieve card from array
                 let card = cards.splice(Math.floor(Math.random() * cards.length), 1)[0];
                 console.log("emitting " + JSON.stringify(card.category) + " to " + socket.room);
                 game.currentCard = card;
@@ -206,6 +203,7 @@ io.on('connection', (socket) => {
         if (!socket.user || !socket.room) return;
 
         let survey = gameMap.get(socket.room).currentCard;
+
         let userAnswer = data['answer'];
 
         socket.user.hasAnswered = true;
@@ -328,11 +326,33 @@ io.on('connection', (socket) => {
         io.in(socket.room).emit('gameStarted');
     });
 
+    let emitGameOver = function(reason) {
+
+        console.log("\n game over because: " + reason);
+
+        let gameOverCard = {
+            category: 'gameOver',
+            reason: reason
+        };
+        let game = gameMap.get(socket.room);
+        game.currentCard = gameOverCard;
+        game.isOver = true;
+
+        updateAndEmitGame(socket.room);
+
+
+    };
+
 
     socket.on('newCardRequest', function () {
         if (!socket.user) return;
         let game = gameMap.get(socket.room);
 
+        // All cards played, emit game over event
+        if (game.cardsPlayed === game.cardsPerGame) {
+            emitGameOver('Alle Karten Gespielt.');
+            return;
+        }
 
         game.cardsPlayed++;
 
