@@ -1,6 +1,11 @@
 let app = require('express')();
 let http = require('http').Server(app);
-let io = require('socket.io')(http);
+let io = require('socket.io')(http, {
+    pingInterval: 4000,
+    pingTimeout: 2000,
+    }
+);
+
 
 let gameMap = new Map();
 
@@ -173,7 +178,7 @@ io.on('connection', (socket) => {
 
             }
 
-            console.log("\n cards left: " + JSON.stringify(game.cards));
+            console.log("Survey Count: " + game.cards['surveys'].length, "Guess Count: " + game.cards['guess'].length)
             let cards = game.cards[game.currentCategory];
 
             // no more cards in current category
