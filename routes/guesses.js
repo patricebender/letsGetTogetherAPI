@@ -186,7 +186,7 @@ module.exports = [
         answer: 44,
         answerCount: 0,
         answerNote: '- „ pneumonoultramicroscopicsilicovolcanoconiosis“',
-        unit: 'Jahre',
+        unit: 'Buchstaben',
         closed: false,
         ranking: []
     },{

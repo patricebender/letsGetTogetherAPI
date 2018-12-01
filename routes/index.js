@@ -67,7 +67,7 @@ io.on('connection', (socket) => {
 
         console.log(JSON.stringify(socket.user.name) + " answered " + guess.question + " \n with guess: " + userAnswer);
 
-        let diff = Math.abs(userAnswer - guess.answer);
+        let diff = round(Math.abs(userAnswer - guess.answer), 2);
         // add user answer to currentCard in game
         guess.ranking.push({answer: userAnswer, player: socket.user, difference: diff, rankNumber: 0, sips: 0});
 
@@ -532,9 +532,28 @@ io.on('connection', (socket) => {
         updateAndEmitGame(socket.room);
     });
 
-})
-;
+});
 
+
+//helper rounding function
+function round(value, exp) {
+    if (typeof exp === 'undefined' || +exp === 0)
+        return Math.round(value);
+
+    value = +value;
+    exp = +exp;
+
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0))
+        return NaN;
+
+    // Shift
+    value = value.toString().split('e');
+    value = Math.round(+(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp)));
+
+    // Shift back
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
+}
 
 let port = process.env.PORT || 3001;
 
