@@ -555,6 +555,20 @@ function round(value, exp) {
     return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
 }
 
+//needed for starting new game logic and also handy in general
+function cardsLeftInGame(game) {
+    let cardsLeft = 0;
+    for (let key in game.cards) {
+        if (game.cards.hasOwnProperty(key)) {
+            console.log(key + " -> " + game.cards[key].length);
+            cardsLeft += game.cards[key].length;
+        }
+    }
+
+    return cardsLeft;
+
+}
+
 let port = process.env.PORT || 3001;
 
 http.listen(port, function () {
