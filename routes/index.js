@@ -1,8 +1,8 @@
 let app = require('express')();
 let http = require('http').Server(app);
 let io = require('socket.io')(http, {
-    pingInterval: 4000,
-    pingTimeout: 2000,
+        pingInterval: 4000,
+        pingTimeout: 2000,
     }
 );
 
@@ -13,12 +13,13 @@ let gameMap = new Map();
 let cards = {}
 cards['surveys'] = require('./surveys');
 cards['guess'] = require('./guesses');
+
 console.log("Survey Count: " + cards['surveys'].length, "Guess Count:" + cards['guess'].length)
 
 io.on('connection', (socket) => {
 
     let updateAndEmitGame = function (room, emitToSocket) {
-
+        console.log("updating game");
         if (!socket.user || !room) return;
 
         io.in(room).clients((error, clients) => {
@@ -41,17 +42,6 @@ io.on('connection', (socket) => {
             }
 
         })
-    }
-    compareGuessAnswer = function (rankingA, rankingB) {
-        //compare absolute difference to correct answer for sorting
-        diffAbsA = rankingA.difference;
-        diffAbsB = rankingB.difference;
-
-        if (diffAbsA < diffAbsB) return -1;
-        if (diffAbsB < diffAbsA) return 1;
-
-        return 0;
-
     }
 
 
@@ -139,7 +129,6 @@ io.on('connection', (socket) => {
     });
 
 
-
     let emitSipsTo = function (socketId) {
 
         let game = gameMap.get(socket.room);
@@ -157,43 +146,28 @@ io.on('connection', (socket) => {
         if (!socket.user || !socket.room) return;
         let game = gameMap.get(socket.room);
 
-        if (game.categories.length > 0) {
+        if (cardsLeftInGame(game) > 0) {
 
-            let categoryIndex = Math.floor(Math.random() * game.categories.length);
-            const randomCategory = game.categories[categoryIndex].type;
-
-            switch (randomCategory) {
-                case 'surveys':
-                    game.currentCategory = 'surveys';
-                    break;
-                case 'guess':
-                    game.currentCategory = 'guess';
-                    break;
-                default:
-                    console.log(randomCategory + " not yet implemented!");
-
-            }
-
-            console.log("Survey Count: " + game.cards['surveys'].length, "Guess Count: " + game.cards['guess'].length)
-            let cards = game.cards[game.currentCategory];
-
-            // no more cards in current category
-            if (cards.length === 0) {
-                console.log("\n No more " + game.currentCategory + " deleting category.." + game.categories.splice(categoryIndex, 1));
+            // category object with cards array
+            const randomCategory = getRandomCategoryForGame(game);
 
 
-                // recursive call for card of other category
-                emitRandomCard();
+            if (!randomCategory) {
+                emitGameOver('Keine Karten mehr ☹️');
             } else {
                 // remove and retrieve card from array
-                let card = cards.splice(Math.floor(Math.random() * cards.length), 1)[0];
-                console.log("emitting " + JSON.stringify(card.category) + " to " + socket.room);
-                game.currentCard = card;
+                const randomCard = getRandomCardForCategory(randomCategory);
+                game.currentCard = randomCard;
+                game.currentCategory = randomCard.category;
+                console.log("emitting " + JSON.stringify(randomCard));
+
                 io.in(socket.room).emit('newCard', {card: game.currentCard});
             }
 
+
         } else {
-            console.log("\n no cards left..");
+            console.log("\n no cards left.." + JSON.stringify(game.cards));
+            emitGameOver('Keine Karten mehr Übrig ☹️')
         }
 
     };
@@ -263,7 +237,6 @@ io.on('connection', (socket) => {
 
     });
 
-
     //returns all users who have not answered yet
     function waitForUsers() {
         return new Promise(resolve => {
@@ -326,7 +299,30 @@ io.on('connection', (socket) => {
         io.in(socket.room).emit('gameStarted');
     });
 
-    let emitGameOver = function(reason) {
+    //start new game and if there are still unplayed cards, start new game with them.
+    socket.on('startNewGame', function () {
+        if (!socket.user || !socket.room) return;
+        let game = gameMap.get(socket.room);
+
+        let unplayedCardsInGame = cardsLeftInGame(game);
+
+        // set cardsPerGame to cards left and keep card array
+        if (unplayedCardsInGame < game.cardsPerGame) {
+            console.log("\n less unique cards than they want to play, resetting cards array");
+            game.cards = getCardsForEnabledCategories(game.categories);
+        } else {
+            console.log("\n enough unique cards for new round!");
+        }
+
+        game.isOver = false;
+        game.cardsPlayed = 0;
+        emitRandomCard();
+        updateAndEmitGame(socket.room);
+
+
+    });
+
+    let emitGameOver = function (reason) {
 
         console.log("\n game over because: " + reason);
 
@@ -355,7 +351,6 @@ io.on('connection', (socket) => {
         }
 
         game.cardsPlayed++;
-
 
         // reset user answers
         game.players.forEach((player) => {
@@ -420,7 +415,7 @@ io.on('connection', (socket) => {
                     themes: data.themes,
                     cardsPerGame: data.cardsPerGame,
                     cardsPlayed: 0,
-                    cards: JSON.parse(JSON.stringify(cards)),
+                    cards: getCardsForEnabledCategories(data.categories),
                     currentCard: {},
                     currentCategory: 'none',
                     multiplier: 1
@@ -521,7 +516,9 @@ io.on('connection', (socket) => {
     socket.on('categoriesChanged', (data) => {
         if (!socket.user || !socket.room) return;
         console.log("Categories in " + socket.room + " changed to: " + JSON.stringify(data.categories));
-        gameMap.get(socket.room).categories = data.categories;
+        let game = gameMap.get(socket.room);
+        game.categories = data.categories;
+        game.cards = getCardsForEnabledCategories(game.categories);
         updateAndEmitGame(socket.room);
     });
 
@@ -559,13 +556,66 @@ function round(value, exp) {
 function cardsLeftInGame(game) {
     let cardsLeft = 0;
     for (let key in game.cards) {
-        if (game.cards.hasOwnProperty(key)) {
+        if (game.cards.hasOwnProperty(key) && isCategoryEnabled(game, key)) {
             console.log(key + " -> " + game.cards[key].length);
             cardsLeft += game.cards[key].length;
         }
     }
-
     return cardsLeft;
+
+}
+
+
+// used before game starts to only copy relevant cards to game cards
+function getCardsForEnabledCategories(categories) {
+    let cardsForGame = {};
+    categories.forEach((category) => {
+        if (category.enabled) {
+            console.log(JSON.stringify(category) + " enabled ");
+            //copy card arrays for enabled categories
+            cardsForGame[category.type] = JSON.parse(JSON.stringify(cards[category.type]));
+        }
+    });
+    return cardsForGame;
+}
+
+function getRandomCategoryForGame(game) {
+    let possibleCategories = [];
+    game.categories.forEach((category) => {
+        if (category.enabled && game.cards[category.type].length > 0) {
+            possibleCategories.push(game.cards[category.type]);
+        }
+    });
+
+    return possibleCategories[Math.floor(Math.random() * possibleCategories.length)];
+
+}
+
+function getRandomCardForCategory(category) {
+    return category.splice(Math.floor(Math.random() * category.length), 1)[0];
+}
+
+
+// needed for calculation of cards left in game
+function isCategoryEnabled(game, category) {
+    let isEnabled = false;
+    game.categories.forEach((c) => {
+        if (c.type === category) {
+            isEnabled = c.enabled
+        }
+    });
+    return isEnabled;
+}
+
+function compareGuessAnswer(rankingA, rankingB) {
+    //compare absolute difference to correct answer for sorting
+    diffAbsA = rankingA.difference;
+    diffAbsB = rankingB.difference;
+
+    if (diffAbsA < diffAbsB) return -1;
+    if (diffAbsB < diffAbsA) return 1;
+
+    return 0;
 
 }
 
