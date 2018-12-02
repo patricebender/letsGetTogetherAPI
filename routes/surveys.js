@@ -393,6 +393,365 @@ module.exports = [{
                 "answerCount": 0
             }
         ]
+    }, {
+        category: 'survey',
+        question: '…nie mehr eine Hose tragen können oder nie mehr ein Oberteil?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Keine Hose",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Kein Oberteil",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
     }
+    , {
+        category: 'survey',
+        question: '…nie wieder ernst sein oder nie wieder lachen können?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Nie Ernst",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Nie Lachen",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…für immer in einer Großstadt oder für immer auf dem Land leben?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Großstadt",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Land",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…in der Zukunft wiedergeboren werden oder in der Vergangenheit?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Zukunft",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Vergangenheit",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…Gedankenlesen oder Zeitreisen können?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Gedankenlesen",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Zeitreisen",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…nie mehr Klopapier benutzen oder dir nie wieder die Hände waschen dürfen?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Kein Klopapier",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Kein Händewaschen",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…für immer auf Fleisch oder für immer auf Gemüse/Obst verzichten?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Gemüse/Obst",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Fleisch",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…bis zum Ende deines Lebens im Gefängnis sitzen oder sofort hingerichtet werden?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Für immer Knast",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Hinrichtung",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…mit 10 anderen Menschen in einer Wohnung leben oder für immer allein?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "WG mit 10",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Alleine",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…bei jedem Song automatisch mitsingen oder mittanzen müssen?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Singen",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Tanzen",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…jedes Wochenende feiern gehen oder jedes Wochenende chillen müssen?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Feiern",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Chillen",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…über den Flur eines Krankenhauses oder einem über den Hintern lecken?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Krankenhaus Flur",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Hintern",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…nie wieder schwitzen oder nie wieder frieren?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Nie schwitzen",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Nie frieren",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…nie wieder das Meer oder nie mehr die Berge sehen können?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Nie mehr Meer",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Nie mehr Berge",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: '…365 Tage denselben Tag erleben oder ein Jahr deines Lebens opfern?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "365 mal selben Tag erleben",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Ein Jahr opfern",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: 'Traube oder Orange',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Traube",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Orange",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: 'Chinesisches oder Italienisches Essen?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Chinesisches",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Italienisches",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: 'Fußball vs. Basketball',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Fußball",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Basketball",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: 'Taxifahrer oder Busfahrer?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "Taxifahrer",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Busfahrer",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: 'iOS oder Android',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "iOS",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "Android",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }, {
+        category: 'survey',
+        question: 'Würdest du lieber von…',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                "title": "…einer Horde entengroßer Pferde angegriffen werden?",
+                "voters": [],
+                "answerCount": 0
+            },
+            {
+                "title": "…einer pferdegroßen Ente angegriffen werden?",
+                "voters": [],
+                "answerCount": 0
+            }
+        ]
+    }
+
 ]
 

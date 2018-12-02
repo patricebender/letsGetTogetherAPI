@@ -185,8 +185,8 @@ module.exports = [
         question: 'Wieviele Buchstaben hat das längste englische Wort laut dem Oxford Dictionary ?',
         answer: 44,
         answerCount: 0,
-        answerNote: '- „ pneumonoultramicroscopicsilicovolcanoconiosis“',
-        unit: 'Jahre',
+        answerNote: '„pneumonoultramicroscopicsilicovolcanoconiosis“',
+        unit: 'Buchstaben',
         closed: false,
         ranking: []
     },{
@@ -203,6 +203,84 @@ module.exports = [
         answer: 23,
         answerCount: 0,
         unit: 'Prozent',
+        closed: false,
+        ranking: []
+    }
+    ,{
+        category: 'guess',
+        question: 'Wie viele Tage verbringt ein Deutscher in seinem Leben durchschnittlich auf dem Klo?',
+        answer: 230,
+        answerCount: 0,
+        unit: 'Tage',
+        closed: false,
+        ranking: []
+    } ,{
+        category: 'guess',
+        question: 'Wie viele Zähne hat ein Eisbär?',
+        answer: 42,
+        answerCount: 0,
+        unit: 'Zähne',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie oft schauen wir durchschnittlich  am Tag aufs Handy?',
+        answer: 88,
+        answerCount: 0,
+        unit: 'Mal',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie lange halten Ehen im Schnitt?',
+        answer: 15,
+        answerCount: 0,
+        unit: 'Jahre',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie viele Eier kann man ca. auf nüchternen Magen essen?',
+        answer: 1,
+        answerNote: 'Danach ist man nicht mehr nüchtern',
+        answerCount: 0,
+        unit: '',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie viele Volumenprozent Alkohol hat das stärkste Bier der Welt?',
+        answer: 57,
+        answerNote: 'Das „Schorschbock“ kommt aus Bayern.',
+        answerCount: 0,
+        unit: 'Prozent',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie lang war die vermutlich länste Bier Bong der Welt?',
+        answer: 50,
+        answerNote: 'Die vermutlich längste Bier-Bong der Welt wurde 2007 gebaut: Bestehend aus einem Trichter und zwei Gartenschläuchen',
+        answerCount: 0,
+        unit: 'Meter',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'In London kam es 1814  zu einer echten Bierflut: Aufgrund eines gebrochenen Gärbottichs strömten wieviel Liter auf die Straßen?',
+        answer: 1500000,
+        answerNote: '8 Menschen kamen dabei ums Leben.',
+        answerCount: 0,
+        unit: 'Liter',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'In London kam es 1814  zu einer echten Bierflut: Aufgrund eines gebrochenen Gärbottichs strömten wieviel Liter auf die Straßen?',
+        answer: 1500000,
+        answerNote: '8 Menschen kamen dabei ums Leben.',
+        answerCount: 0,
+        unit: 'Liter',
         closed: false,
         ranking: []
     }
