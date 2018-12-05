@@ -199,12 +199,12 @@ io.on('connection', (socket) => {
                 if (users.length === 0) {
                     // close survey
                     survey.closed = true;
-                    console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey))
+                    console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey.question))
 
 
-                    let firstOption = survey.options[0].voters.length;
-                    let secondOption = survey.options[1].voters.length;
-                    console.log(firstOption, secondOption)
+                    let firstOption = survey.options[0];
+                    let secondOption = survey.options[1];
+                    console.log(firstOption.title + " x" + firstOption.voters.length , secondOption.title + " x" + secondOption.voters.length)
 
                     let losers = firstOption > secondOption ?
                         survey.options[1].voters :
@@ -422,7 +422,7 @@ io.on('connection', (socket) => {
 
                 gameMap.set(data.room, game);
                 console.log(socket.room + " created! \n" +
-                    "Number of games in gameMap: " + gameMap.length);
+                    "Number of games in gameMap: " + gameMap.size);
 
 
 
@@ -501,6 +501,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('avatarChanged', (data) => {
+        if (!socket.user || !socket.room) return;
         console.log(JSON.stringify(socket.user) + " changes avatar to " + data.newAvatar);
         socket.user.avatar = data.newAvatar;
         console.log(JSON.stringify(socket.user))
