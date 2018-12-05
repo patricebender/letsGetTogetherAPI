@@ -159,7 +159,7 @@ io.on('connection', (socket) => {
                 const randomCard = getRandomCardForCategory(randomCategory);
                 game.currentCard = randomCard;
                 game.currentCategory = randomCard.category;
-                console.log("emitting " + JSON.stringify(randomCard));
+                console.log("emitting " + JSON.stringify(randomCard.category));
 
                 io.in(socket.room).emit('newCard', {card: game.currentCard});
             }
@@ -183,7 +183,7 @@ io.on('connection', (socket) => {
         socket.user.hasAnswered = true;
         survey.answerCount++;
 
-        console.log(JSON.stringify(socket.user) + " answered " + data['survey'].question + " \n with option: " + data['answer'] + " \n" +
+        console.log(JSON.stringify(socket.user.name) + " answered " + data['survey'].question + " \n with option: " + data['answer'] + " \n" +
             "in room: " + socket.room)
 
         // add user answer to currentCard in game
@@ -223,7 +223,7 @@ io.on('connection', (socket) => {
                     updateAndEmitGame(socket.room)
 
                 } else {
-                    console.log("Wait for users to answer: " + JSON.stringify(users))
+                    console.log("Wait for users to answer: " + JSON.stringify(users.length))
                     // noinspection JSUnresolvedFunction
                     io.in(socket.room).emit('surveyUpdate', {survey: gameMap.get(socket.room).currentCard});
 
@@ -392,7 +392,7 @@ io.on('connection', (socket) => {
 
     socket.on('createRoomRequest', (data) => {
         if (!socket.user) return;
-        console.log(JSON.stringify(socket.user) + " want's to create " + data.room);
+        console.log(JSON.stringify(socket.user.name) + " want's to create " + data.room);
 
         if (!isRoomEmpty(data.room)) {
             socket.emit('roomAlreadyExists');
@@ -403,7 +403,6 @@ io.on('connection', (socket) => {
                 socket.room = data.room;
 
                 console.log("emitting update user: " + JSON.stringify(socket.user))
-
                 socket.emit('updateUser', {user: socket.user});
 
 
@@ -422,12 +421,10 @@ io.on('connection', (socket) => {
                 }
 
                 gameMap.set(data.room, game);
-                console.log(socket.room + " created!" +
-                    " with settings: " + JSON.stringify(game));
+                console.log(socket.room + " created! \n" +
+                    "Number of games in gameMap: " + gameMap.length);
 
-                for (let [key, value] of gameMap) {
-                    console.log(key + " = " + value);
-                }
+
 
                 socket.emit('roomCreated', {room: socket.room, game: game});
 
@@ -487,7 +484,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('setSocketUser', (data) => {
-        console.log("set socket user " + data.user, socket.id)
+        console.log("set socket user " + JSON.stringify(data.user), socket.id)
         socket.user = data.user;
         socket.user.socketId = socket.id;
         io.to(socket.id).emit('updateUser', {user: socket.user});
@@ -571,7 +568,6 @@ function getCardsForEnabledCategories(categories) {
     let cardsForGame = {};
     categories.forEach((category) => {
         if (category.enabled) {
-            console.log(JSON.stringify(category) + " enabled ");
             //copy card arrays for enabled categories
             cardsForGame[category.type] = JSON.parse(JSON.stringify(cards[category.type]));
         }
