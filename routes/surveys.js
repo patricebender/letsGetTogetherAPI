@@ -173,7 +173,7 @@ module.exports = [{
         ]
     }, {
         category: 'survey',
-        question: 'Spaß im Job aber kein Geld oder Spaß im Job aber kein Geld?',
+        question: 'Spaß im Job aber kein Geld oder kein Spaß im Job aber viel Geld?',
         answerCount: 0,
         closed: false,
         options: [
@@ -184,23 +184,6 @@ module.exports = [{
             },
             {
                 "title": "Kein Spaß aber viel Geld",
-                "voters": [],
-                "answerCount": 0
-            }
-        ]
-    }, {
-        category: 'survey',
-        question: 'Wenn es Reinkarnation gäbe, würdest du als Mensch oder als Tier wiedergeboren werden wollen?',
-        answerCount: 0,
-        closed: false,
-        options: [
-            {
-                "title": "Mensch",
-                "voters": [],
-                "answerCount": 0
-            },
-            {
-                "title": "Tier",
                 "voters": [],
                 "answerCount": 0
             }
