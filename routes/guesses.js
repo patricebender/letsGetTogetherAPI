@@ -144,7 +144,7 @@ module.exports = [
         unit: 'Meter',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'Wieviele Federn hat ein ausgewachsener Schwan?',
         answer: 25000,
@@ -152,7 +152,7 @@ module.exports = [
         unit: 'Federn',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'Wie hoch ist der Berliner Fernsehturm?',
         answer: 365,
@@ -170,7 +170,7 @@ module.exports = [
         closed: false,
         ranking: []
     },
-   {
+    {
         category: 'guess',
         question: 'Im Laufe eines 60 Jährigen Lebens hat ein Mann durchschnittlich wie viele Jahre lang eine Erektion während er schläft?',
         answer: 5,
@@ -189,7 +189,7 @@ module.exports = [
         unit: 'Buchstaben',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'Wie lange muss man ein Straußenei kochen, bis es hartgekocht ist ?',
         answer: 40,
@@ -197,7 +197,7 @@ module.exports = [
         unit: 'Minuten',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'Wieviel Prozent aller weltweiten Schäden an Kopieren werden dadurch verursacht, dass Menschen ihren Arsch fotokopieren?',
         answer: 23,
@@ -206,7 +206,7 @@ module.exports = [
         closed: false,
         ranking: []
     }
-    ,{
+    , {
         category: 'guess',
         question: 'Wie viele Tage verbringt ein Deutscher in seinem Leben durchschnittlich auf dem Klo?',
         answer: 230,
@@ -214,7 +214,7 @@ module.exports = [
         unit: 'Tage',
         closed: false,
         ranking: []
-    } ,{
+    }, {
         category: 'guess',
         question: 'Wie viele Zähne hat ein Eisbär?',
         answer: 42,
@@ -222,7 +222,7 @@ module.exports = [
         unit: 'Zähne',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'Wie oft schauen wir durchschnittlich  am Tag aufs Handy?',
         answer: 88,
@@ -230,7 +230,7 @@ module.exports = [
         unit: 'Mal',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'Wie lange halten Ehen im Schnitt?',
         answer: 15,
@@ -238,7 +238,7 @@ module.exports = [
         unit: 'Jahre',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'Wie viele Eier kann man ca. auf nüchternen Magen essen?',
         answer: 1,
@@ -247,7 +247,7 @@ module.exports = [
         unit: '',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'Wie viele Volumenprozent Alkohol hat das stärkste Bier der Welt?',
         answer: 57,
@@ -256,7 +256,7 @@ module.exports = [
         unit: 'Prozent',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'Wie lang war die vermutlich länste Bier Bong der Welt?',
         answer: 50,
@@ -265,7 +265,7 @@ module.exports = [
         unit: 'Meter',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
         question: 'In London kam es 1814  zu einer echten Bierflut: Aufgrund eines gebrochenen Gärbottichs strömten wieviel Liter auf die Straßen?',
         answer: 1500000,
@@ -274,13 +274,188 @@ module.exports = [
         unit: 'Liter',
         closed: false,
         ranking: []
-    },{
+    }, {
         category: 'guess',
-        question: 'In London kam es 1814  zu einer echten Bierflut: Aufgrund eines gebrochenen Gärbottichs strömten wieviel Liter auf die Straßen?',
-        answer: 1500000,
-        answerNote: '8 Menschen kamen dabei ums Leben.',
+        question: 'Was ist das höchste für eine Bowlinbgkugel zugelassene Gewicht?',
+        answer: 7.26,
         answerCount: 0,
-        unit: 'Liter',
+        unit: 'kg',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viele Burger können aus einer Kuh hergestellt werden?',
+        answer: 1200,
+        answerCount: 0,
+        unit: 'Burger',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viel Prozent aller Raucher weltweit leben in China?',
+        answer: 34,
+        answerCount: 0,
+        unit: '%',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Frauen lügen laut einer Untersuchung 3 mal am Tag, wie oft lügen Männer durchschnittlich?',
+        answer: 6,
+        answerCount: 0,
+        unit: 'Lügen / Tag',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wieviel prozent der jährlich angebauten Trauben werden für die Weinproduktion verwendet?',
+        answer: 85,
+        answerCount: 0,
+        unit: '%',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie oft im Leben schlägt das menschliche Herz?',
+        answer: 2500000000,
+        answerCount: 0,
+        unit: 'Schläge',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viele Stunden verbringt eine Frau im Jahr vor dem Spiegel?',
+        answer: 120,
+        answerCount: 0,
+        unit: 'Stunden',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viele Menschen sterben pro Jahr, weltweit, an passiv Rauch?',
+        answer: 80000,
+        answerCount: 0,
+        unit: 'Menschen pro Jahr',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viel drückt Barack Obama auf der Bank?',
+        answer: 80,
+        answerCount: 0,
+        unit: 'kg',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viel % der Menschheit hat in der letzten Woche Pilze gegessen?',
+        answer: 60,
+        answerCount: 0,
+        unit: '%',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viel wiegt ein Liter Honig?',
+        answer: 1.4,
+        answerCount: 0,
+        unit: 'kg',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wann erschien der erste Playboy?',
+        answer: 1952,
+        answerCount: 0,
+        unit: 'Jahr',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viele Schritte macht Usain Bolt bei einem 100 Meter Sprint?',
+        answer: 41,
+        answerCount: 0,
+        unit: 'Schritte',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie lang war der längste Verkehsstau?',
+        answer: 176,
+        answerCount: 0,
+        unit: 'km',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viele Freunde hat ein Facebook User Durchschnittlich?',
+        answer: 130,
+        answerCount: 0,
+        unit: 'Freunde',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: '4.1 Milliarden Menschen besitzen ein Handy, wie viele besitzen eine Zahnbürste? (In Milliarden)',
+        answer: 3.5,
+        answerCount: 0,
+        unit: 'Menschen',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viel kg wiegt der Hoden eines Blauwals?',
+        answer: 500,
+        answerCount: 0,
+        unit: 'kg',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie lange brauch ein Blitz vom Mond zur Erde?',
+        answer: 500,
+        answerCount: 0,
+        unit: 'Sekunden',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viele Prozent der Erwachsenen Chinesen Wohnen bei ihren Eltern?',
+        answer: 30,
+        answerCount: 0,
+        unit: '%',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie lange war Barbie mit Ken zusammen, als sie sich 2004 scheiden ließen?',
+        answer: 13,
+        answerCount: 0,
+        unit: 'Jahre',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viele Minuten verbringt man töglich mit Kauen?',
+        answer: 30,
+        answerCount: 0,
+        unit: 'Minuten',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie viele % der Weltbevölkerung sind unter 25?',
+        answer: 51,
+        answerCount: 0,
+        unit: '%',
+        closed: false,
+        ranking: []
+    }, {
+        category: 'guess',
+        question: 'Wie hoch ist das Tennisnetz in der Mitte? (in cm)',
+        answer: 91,
+        answerCount: 0,
+        unit: 'cm',
         closed: false,
         ranking: []
     }
