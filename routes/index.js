@@ -25,13 +25,16 @@ io.on('connection', (socket) => {
         io.in(room).clients((error, clients) => {
             if (error) throw error;
 
+
+            let game = gameMap.get(room);
             let userList = [];
             clients.forEach(function (client) {
                 userList.push(io.sockets.connected[client].user)
             })
 
             //refresh player list in game object
-            gameMap.get(room).players = userList;
+            game.players = userList;
+            game.playerCount = userList.length;
 
 
             //only send to one client
@@ -67,6 +70,9 @@ io.on('connection', (socket) => {
                 guess.closed = true;
                 console.log("Everyone has answered. Sort Ranking and emit results for Guess: " + JSON.stringify(guess.question))
                 guess.ranking.sort(compareGuessAnswer);
+
+                // to provide info about remaining players
+                gameMap.get(socket.room).currentCard.playerLeftCount = 0;
 
                 // big groups should drink more e.g. for 10 player I want the last two to drink.
                 let howManyDrink = guess.answerCount / 5 < 1 ? 1 : Math.floor(guess.answerCount / 5);
@@ -118,9 +124,10 @@ io.on('connection', (socket) => {
                 io.in(socket.room).emit('guessResults', {guess: guess, ranking: guess.ranking});
                 updateAndEmitGame(socket.room)
             } else {
-                console.log("Wait for users to answer: " + JSON.stringify(users))
-                // noinspection JSUnresolvedFunction
-                io.in(socket.room).emit('guessUpdate', {guess: gameMap.get(socket.room).currentCard});
+                console.log("Wait for users to answer: " + users.length)
+                // to provide info about remaining players
+                gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
+                updateAndEmitGame(socket.room)
 
 
             }
@@ -159,8 +166,8 @@ io.on('connection', (socket) => {
                 const randomCard = getRandomCardForCategory(randomCategory);
                 game.currentCard = randomCard;
                 game.currentCategory = randomCard.category;
-                console.log("emitting " + JSON.stringify(randomCard.category));
 
+                console.log("emitting " + JSON.stringify(randomCard.category));
                 io.in(socket.room).emit('newCard', {card: game.currentCard});
             }
 
@@ -201,10 +208,12 @@ io.on('connection', (socket) => {
                     survey.closed = true;
                     console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey.question))
 
+                    // to provide info about remaining players
+                    gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
 
                     let firstOption = survey.options[0];
                     let secondOption = survey.options[1];
-                    console.log(firstOption.title + " x" + firstOption.voters.length , secondOption.title + " x" + secondOption.voters.length)
+                    console.log(firstOption.title + " x" + firstOption.voters.length, secondOption.title + " x" + secondOption.voters.length)
 
                     let losers = firstOption > secondOption ?
                         survey.options[1].voters :
@@ -223,10 +232,11 @@ io.on('connection', (socket) => {
                     updateAndEmitGame(socket.room)
 
                 } else {
-                    console.log("Wait for users to answer: " + JSON.stringify(users.length))
-                    // noinspection JSUnresolvedFunction
-                    io.in(socket.room).emit('surveyUpdate', {survey: gameMap.get(socket.room).currentCard});
+                    console.log("Wait for users to answer: " + JSON.stringify(users.length));
 
+                    // to provide info about remaining players
+                    gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
+                    updateAndEmitGame(socket.room)
 
                 }
 
@@ -274,6 +284,11 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', function () {
         if (!socket.user) return;
+
+        // if user has not answered current card yet, decrease playerLeftCount
+        if (!socket.user.hasAnswered && gameMap.get(socket.room)) {
+            --gameMap.get(socket.room).currentCard.playerLeftCount;
+        }
 
         console.log("Socket disconnects: " + JSON.stringify(socket.user))
         if (isRoomEmpty(socket.room)) {
@@ -377,6 +392,12 @@ io.on('connection', (socket) => {
                 socket.room = data.room;
                 console.log(socket.user.name + " joined: " + socket.room);
 
+
+                // if a card is currently active, increase playerLeftCount because new player also want to play!
+                if (!isEmpty(gameMap.get(socket.room).currentCard)) {
+                    ++gameMap.get(socket.room).currentCard.playerLeftCount;
+                }
+
                 socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
                 socket.emit('roomJoinSucceed', {room: socket.room, game: gameMap.get(socket.room)});
                 updateAndEmitGame(socket.room);
@@ -402,9 +423,6 @@ io.on('connection', (socket) => {
                 //set socket basic data
                 socket.room = data.room;
 
-                console.log("emitting update user: " + JSON.stringify(socket.user))
-                socket.emit('updateUser', {user: socket.user});
-
 
                 let game = {
                     players: [],
@@ -417,15 +435,15 @@ io.on('connection', (socket) => {
                     cards: getCardsForEnabledCategories(data.categories),
                     currentCard: {},
                     currentCategory: 'none',
-                    multiplier: 1
+                    multiplier: 1,
+                    playerCount: 1
                 }
 
                 gameMap.set(data.room, game);
                 console.log(socket.room + " created! \n" +
                     "Number of games in gameMap: " + gameMap.size);
 
-
-
+                updateAndEmitGame(socket.room);
                 socket.emit('roomCreated', {room: socket.room, game: game});
 
             });
@@ -527,7 +545,8 @@ io.on('connection', (socket) => {
         updateAndEmitGame(socket.room);
     });
 
-});
+})
+;
 
 
 //helper rounding function
@@ -614,6 +633,10 @@ function compareGuessAnswer(rankingA, rankingB) {
 
     return 0;
 
+}
+
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0 && obj.constructor === Object
 }
 
 let port = process.env.PORT || 3001;
