@@ -283,11 +283,16 @@ io.on('connection', (socket) => {
 
 
     socket.on('disconnect', function () {
-        if (!socket.user) return;
+        if (!socket.user || !socket.room) return;
+
+        let game = gameMap.get(socket.room);
 
         // if user has not answered current card yet, decrease playerLeftCount
-        if (!socket.user.hasAnswered && gameMap.get(socket.room)) {
-            --gameMap.get(socket.room).currentCard.playerLeftCount;
+        if (!socket.user.hasAnswered && game) {
+            if (!isEmpty(game.currentCard)) {
+                console.log(JSON.stringify(game.currentCard))
+                --gameMap.get(socket.room).currentCard.playerLeftCount;
+            }
         }
 
         console.log("Socket disconnects: " + JSON.stringify(socket.user))
@@ -356,7 +361,7 @@ io.on('connection', (socket) => {
 
 
     socket.on('newCardRequest', function () {
-        if (!socket.user) return;
+        if (!socket.user || !socket.room) return;
         let game = gameMap.get(socket.room);
 
         // All cards played, emit game over event
@@ -481,7 +486,8 @@ io.on('connection', (socket) => {
 
 
     socket.on('requestUserList', () => {
-        console.log(socket.user + " requests user list");
+        if (!socket.user) return;
+        console.log(socket.user.name + " requests user list");
         updateAndEmitGame(socket.room, "Only emit to requester");
     });
 
@@ -506,7 +512,33 @@ io.on('connection', (socket) => {
         socket.user = data.user;
         socket.user.socketId = socket.id;
         io.to(socket.id).emit('updateUser', {user: socket.user});
+
     });
+
+
+    socket.on('reconnectRequest', (data) => {
+        console.log(JSON.stringify(data.user) + "is back");
+        socket.user = data.user;
+        socket.user.socketId = socket.id;
+        io.to(socket.id).emit('updateUser', {user: socket.user});
+
+        let usersLastRoom = data.lastRoom;
+        console.log(usersLastRoom ? "users last room was: " + usersLastRoom : '');
+
+        let game = gameMap.get(usersLastRoom);
+
+        if (game) {
+            console.log("Room still exists. " +
+                "\nWill Reconnect User");
+            socket.emit('userReconnected');
+
+        } else {
+            console.log("Room does not exist.");
+            socket.emit('userReconnected');
+        }
+
+
+    })
 
     socket.on('userNameChanged', (data) => {
         if (!socket.user) return;
