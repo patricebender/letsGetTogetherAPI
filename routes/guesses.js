@@ -458,5 +458,103 @@ module.exports = [
         unit: 'cm',
         closed: false,
         ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie viele von 1000 US-Amerikanern sitzen statistisch gesehen im Gefägnis?',
+        answer: 7,
+        answerCount: 0,
+        unit: 'Amerikaner',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie viele Statuen ließ Stalin von sich selbst anfertigen?',
+        answer: 6000,
+        answerCount: 0,
+        unit: 'Statuen',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie weit ist der weiteste Sprung, den ein Mensch jemals aus dem Stand geschafft hat?',
+        answer: 3.73,
+        answerCount: 0,
+        unit: 'Meter',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie viele Fahrräder werden in Amsterdam jedes Jahr gestohlen?',
+        answer: 100000,
+        answerCount: 0,
+        unit: 'Fahrräder',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie viel Prozent aller Menschen finden sich selbst attraktiv?',
+        answer: 60,
+        answerCount: 0,
+        unit: '%',
+        closed: false,
+        ranking: []
+    },
+    {
+        category: 'guess',
+        question: 'Wie alt kann ein Schimpanse werden?',
+        answer: 50,
+        answerCount: 0,
+        unit: 'Jahre',
+        answerNote: '🐒',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie viele Kalorien enthält eine durchschnittliche Banane?',
+        answer: 110,
+        answerCount: 0,
+        unit: 'Kalorien',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie viel Fuß hoch ist der Mount Everest?',
+        answer: 29029,
+        answerCount: 0,
+        unit: 'Fuß',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie lange braucht ein Eichhörnchen unm einen Tannenzapfen abzunagen?',
+        answer: 7,
+        answerCount: 0,
+        unit: 'Minuten',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'In welchem Jahr wurde die erste Herztransplantation an einem Menschen durchgeführt?',
+        answer: 1967,
+        answerCount: 0,
+        unit: 'Jahr',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'In welchem Jahr wurde zum ersten mal Coca-Cola hergestellt?',
+        answer: 1886,
+        answerCount: 0,
+        unit: 'Jahr',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Wie viele Tonnen Stahl wurden für den Eiffelturm in Paris verbaut?',
+        answer: 7000,
+        answerCount: 0,
+        unit: 'Tonnen',
+        closed: false,
+        ranking: []
     }
 ]
