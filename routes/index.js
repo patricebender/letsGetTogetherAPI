@@ -15,6 +15,9 @@ cards['surveys'] = require('./surveys');
 cards['guess'] = require('./guesses');
 cards['quiz'] = require('./quizzes');
 
+let cardCount = cards['surveys'].length + cards['guess'].length + cards['quiz'].length;
+console.log("Number of Cards: " + cardCount);
+
 io.on('connection', (socket) => {
 
     let updateAndEmitGame = function (room, emitToSocket) {
