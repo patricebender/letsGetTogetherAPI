@@ -243,8 +243,8 @@ io.on('connection', (socket) => {
 
                     let losers = firstOption.voters.length > secondOption.voters.length ?
                         survey.options[1].voters :
-                        secondOption.voters.length > firstOption ?
-                            survey.options[0].voters.voters.length : [];
+                        secondOption.voters.length > firstOption.voters.length ?
+                            survey.options[0].voters : [];
 
 
                     console.log("LOSERS ARE: " + JSON.stringify(losers));
