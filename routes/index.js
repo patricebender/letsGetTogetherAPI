@@ -64,14 +64,14 @@ io.on('connection', (socket) => {
         guess.ranking.push({answer: userAnswer, player: socket.user, difference: diff, rankNumber: 0, sips: 0});
 
         waitForUsers().then((users) => {
+            // to provide info about remaining players
+            gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
+
             if (users.length === 0) {
                 //close guess
                 guess.closed = true;
                 console.log("Everyone has answered. Sort Ranking and emit results for Guess: " + JSON.stringify(guess.question))
                 guess.ranking.sort(compareGuessAnswer);
-
-                // to provide info about remaining players
-                gameMap.get(socket.room).currentCard.playerLeftCount = 0;
 
                 // big groups should drink more e.g. for 10 player I want the last two to drink.
                 let howManyDrink = guess.answerCount / 5 < 1 ? 1 : Math.floor(guess.answerCount / 5);
@@ -227,13 +227,12 @@ io.on('connection', (socket) => {
 
         waitForUsers()
             .then((users) => {
+                gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
                 if (users.length === 0) {
                     // close survey
                     survey.closed = true;
                     console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey.question))
 
-                    // to provide info about remaining players
-                    gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
 
                     let firstOption = survey.options[0];
                     let secondOption = survey.options[1];
@@ -258,8 +257,6 @@ io.on('connection', (socket) => {
                 } else {
                     console.log("Wait for users to answer: " + JSON.stringify(users.length));
 
-                    // to provide info about remaining players
-                    gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
                     updateAndEmitGame(socket.room)
 
                 }
@@ -270,6 +267,53 @@ io.on('connection', (socket) => {
             })
 
     });
+
+    let emitSipsTo = function (socketId) {
+
+        let game = gameMap.get(socket.room);
+        game.players.forEach((player) => {
+            if (socketId === player.socketId) {
+                let sipPenalty = game.multiplier * player.multiplier * 1;
+                player.sips += sipPenalty;
+
+                //TODO emit sip event
+                console.log("Emitting sips to: " + JSON.stringify(player))
+
+                io.to(player.socketId).emit('sip', {sips: sipPenalty});
+                io.to(player.socketId).emit('updateUser', {user: player});
+            }
+        })
+    }
+
+    let emitRandomCard = function () {
+        if (!socket.user || !socket.room) return;
+        let game = gameMap.get(socket.room);
+
+        if (cardsLeftInGame(game) > 0) {
+
+            // category object with cards array
+            const randomCategory = getRandomCategoryForGame(game);
+
+
+            if (!randomCategory) {
+                emitGameOver('Keine Karten mehr ☹️');
+            } else {
+                // remove and retrieve card from array
+                const randomCard = getRandomCardForCategory(randomCategory);
+                game.currentCard = randomCard;
+                game.currentCategory = randomCard.category;
+
+                console.log("emitting " + JSON.stringify(randomCard.category));
+                io.in(socket.room).emit('newCard', {card: game.currentCard});
+            }
+
+
+        } else {
+            console.log("\n no cards left.." + JSON.stringify(game.cards));
+            emitGameOver('Keine Karten mehr Übrig ☹️')
+        }
+
+    };
 
     //returns all users who have not answered yet
     function waitForUsers() {
@@ -296,6 +340,7 @@ io.on('connection', (socket) => {
         io.in(socket.room).clients((error, clients) => {
             if (error) throw error;
             const randomClientId = clients[Math.floor(Math.random() * clients.length)];
+            if (!randomClientId) return;
             let randomUser = io.sockets.connected[randomClientId].user;
             gameMap.get(socket.room).admin = randomUser;
         });
@@ -328,7 +373,9 @@ io.on('connection', (socket) => {
         } else {
             if (socket.user === gameMap.get(socket.room).admin) {
                 console.log("admin left");
-                setNewRandomAdmin();
+                if (gameMap.get(socket.room).players.length > 0) {
+                    setNewRandomAdmin();
+                }
             }
             if (socket.room) {
                 io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
