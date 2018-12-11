@@ -505,7 +505,7 @@ module.exports = [
 
             },
             {
-                text: "Maultier"
+                text: "Eselstute"
             }
         ],
         ranking: [],
