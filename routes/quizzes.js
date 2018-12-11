@@ -215,31 +215,6 @@ module.exports = [
         wrongAnswerCount: 0,
     }, {
         category: 'quiz',
-        question: ' Aus wie vielen Kräuter ist Jägermeister gemacht?',
-        answerCount: 0,
-        closed: false,
-        options: [
-            {
-                text: "15"
-
-
-            },
-            {
-                text: "56",
-                isCorrect: true
-            },
-            {
-                text: "40"
-            },
-            {
-                text: "72",
-
-            }
-        ],
-        ranking: [],
-        wrongAnswerCount: 0,
-    }, {
-        category: 'quiz',
         question: 'Aus wie vielen Kräuter ist Jägermeister gemacht?',
         answerCount: 0,
         closed: false,
@@ -554,29 +529,6 @@ module.exports = [
             },
             {
                 text: "Belgien"
-            }
-        ],
-        ranking: [],
-        wrongAnswerCount: 0,
-    }, {
-        category: 'quiz',
-        question: 'Wie lautet der Begriff für qualifizierte Leute, die man in "sein Boot" holt?',
-        answerCount: 0,
-        closed: false,
-        options: [
-            {
-                text: "Manter"
-            },
-            {
-                text: "Kader",
-                isCorrect: true
-            },
-            {
-                text: "Dekanter",
-
-            },
-            {
-                text: "Mader"
             }
         ],
         ranking: [],

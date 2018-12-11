@@ -436,7 +436,7 @@ module.exports = [
         ranking: []
     }, {
         category: 'guess',
-        question: 'Wie viele Minuten verbringt man töglich mit Kauen?',
+        question: 'Wie viele Minuten verbringt man täglich mit Kauen?',
         answer: 30,
         answerCount: 0,
         unit: 'Minuten',
