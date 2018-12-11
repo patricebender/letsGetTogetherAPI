@@ -13,8 +13,10 @@ let gameMap = new Map();
 let cards = {}
 cards['surveys'] = require('./surveys');
 cards['guess'] = require('./guesses');
+cards['quiz'] = require('./quizzes');
 
-console.log("Survey Count: " + cards['surveys'].length, "Guess Count:" + cards['guess'].length)
+let cardCount = cards['surveys'].length + cards['guess'].length + cards['quiz'].length;
+console.log("Number of Cards: " + cardCount);
 
 io.on('connection', (socket) => {
 
@@ -65,14 +67,14 @@ io.on('connection', (socket) => {
         guess.ranking.push({answer: userAnswer, player: socket.user, difference: diff, rankNumber: 0, sips: 0});
 
         waitForUsers().then((users) => {
+            // to provide info about remaining players
+            gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
+
             if (users.length === 0) {
                 //close guess
                 guess.closed = true;
                 console.log("Everyone has answered. Sort Ranking and emit results for Guess: " + JSON.stringify(guess.question))
                 guess.ranking.sort(compareGuessAnswer);
-
-                // to provide info about remaining players
-                gameMap.get(socket.room).currentCard.playerLeftCount = 0;
 
                 // big groups should drink more e.g. for 10 player I want the last two to drink.
                 let howManyDrink = guess.answerCount / 5 < 1 ? 1 : Math.floor(guess.answerCount / 5);
@@ -97,36 +99,13 @@ io.on('connection', (socket) => {
                 });
 
                 // calculate sips
-                let ranking = guess.ranking;
-                let i = ranking.length - 1;
-                while (howManyDrink > 0 && i > 0) {
-                    // both drink
-                    if (ranking[i].rankNumber === ranking[i - 1].rankNumber) {
-                        ranking[i].sips = ranking[i].player.multiplier * game.multiplier * 1;
-                        emitSipsTo(ranking[i].player.socketId);
-                        // if the two got the first rank and there still need to be sipped, sip.
-                        if (i === 1) {
-                            console.log("also emit to first one: " + JSON.stringify(ranking[i - 1].player));
-                            ranking[i - 1].sips = ranking[i - 1].player.multiplier * game.multiplier * 1;
-                            emitSipsTo(ranking[i - 1].player.socketId);
-                        }
-
-                    } else {
-                        ranking[i].sips = ranking[i].player.multiplier * game.multiplier * 1;
-                        emitSipsTo(ranking[i].player.socketId);
-                        howManyDrink--;
-                    }
-                    i--;
-                }
-
+                calcSips(guess.ranking, howManyDrink);
 
                 // noinspection JSUnresolvedFunction
                 io.in(socket.room).emit('guessResults', {guess: guess, ranking: guess.ranking});
                 updateAndEmitGame(socket.room)
             } else {
                 console.log("Wait for users to answer: " + users.length)
-                // to provide info about remaining players
-                gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
                 updateAndEmitGame(socket.room)
 
 
@@ -135,15 +114,175 @@ io.on('connection', (socket) => {
 
     });
 
+    function calcSips(ranking, howManyDrink) {
+
+        let i = ranking.length - 1;
+
+        while (howManyDrink > 0 && i > 0) {
+            // both drink
+            if (ranking[i].rankNumber === ranking[i - 1].rankNumber) {
+                ranking[i].sips = ranking[i].player.multiplier * 1;
+                emitSipsTo(ranking[i].player.socketId);
+                // if the two got the first rank and there still need to be sipped, sip.
+                if (i === 1) {
+                    console.log("also emit to first one: " + JSON.stringify(ranking[i - 1].player));
+                    ranking[i - 1].sips = ranking[i - 1].player.multiplier * 1;
+                    emitSipsTo(ranking[i - 1].player.socketId);
+                }
+
+            } else {
+                ranking[i].sips = ranking[i].player.multiplier * 1;
+                emitSipsTo(ranking[i].player.socketId);
+                howManyDrink--;
+            }
+            i--;
+        }
+    };
+
+    socket.on('quizAnswer', (data) => {
+        if (!socket.user || !socket.room) return;
+        let quiz = gameMap.get(socket.room).currentCard;
+        let isCorrectAnswer = data.answer.isCorrect;
+
+        console.log(socket.user.name + " answered " + quiz.question + "" + (isCorrectAnswer ? " correct " : " wrong ") + "with answer: " + data.answer.text + "\n" +
+            "time: " + data.time);
+
+
+        socket.user.hasAnswered = true;
+
+
+        quiz.answerCount++;
+
+        !isCorrectAnswer ? quiz.wrongAnswerCount++ : '';
+
+        // add user answer to currentCard in game
+        quiz.ranking.push({
+            time: data.time,
+            player: socket.user,
+            sips: 0,
+            answer: data.answer,
+        });
+
+
+        waitForUsers()
+            .then((users) => {
+                gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
+                if (users.length === 0) {
+                    console.log("Everyone has answered.")
+                    quiz.closed = true;
+
+                    let quizRanking = quiz.ranking;
+
+                    quizRanking.sort(compareQuizAnswer);
+
+
+                    // everyone answered correct, so the slowest player drink
+                    if(quiz.wrongAnswerCount === 0){
+                        console.log("everyone answered correctly, slowest player drink");
+                        emitSipsTo(quizRanking[quizRanking.length - 1].player.socketId);
+                        quizRanking[quizRanking.length - 1].sips = quizRanking[quizRanking.length - 1].player.multiplier * 1;
+                    }
+                    // everyone with wrong answer drink
+                    quizRanking.forEach((rank) => {
+                        if (!rank.answer.isCorrect) {
+                            rank.sips = rank.player.multiplier * 1;
+                            emitSipsTo(rank.player.socketId);
+                        }
+                    });
+
+
+                    console.log(JSON.stringify(quizRanking));
+
+
+                    io.in(socket.room).emit('quizResults', {quiz: quiz, ranking: quizRanking});
+                    updateAndEmitGame(socket.room);
+                } else {
+                    console.log("Wait for users to answer: " + JSON.stringify(users.length));
+                    updateAndEmitGame(socket.room);
+
+                }
+
+            });
+
+    });
+
+
+    socket.on('surveyAnswer', (data) => {
+        if (!socket.user || !socket.room) return;
+
+        let survey = gameMap.get(socket.room).currentCard;
+
+        let userAnswer = data['answer'];
+
+        socket.user.hasAnswered = true;
+        survey.answerCount++;
+
+        console.log(JSON.stringify(socket.user.name) + " answered " + data['survey'].question + " \n with option: " + data['answer'] + " \n" +
+            "in room: " + socket.room)
+
+        // add user answer to currentCard in game
+        survey.options.forEach((option) => {
+            if (option.title === userAnswer) {
+                option.voters.push(socket.user);
+                option.answerCount++;
+            }
+        });
+
+        waitForUsers()
+            .then((users) => {
+                gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
+                if (users.length === 0) {
+                    // close survey
+                    survey.closed = true;
+                    console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey.question))
+
+
+                    let firstOption = survey.options[0];
+                    let secondOption = survey.options[1];
+                    console.log(firstOption.title + " x" + firstOption.voters.length, secondOption.title + " x" + secondOption.voters.length)
+
+                    let losers = firstOption.voters.length > secondOption.voters.length ?
+                        survey.options[1].voters :
+                        secondOption.voters.length > firstOption ?
+                            survey.options[0].voters.voters.length : [];
+
+
+                    console.log("LOSERS ARE: " + JSON.stringify(losers));
+
+                    losers.forEach((loser) => {
+                        emitSipsTo(loser.socketId);
+                    })
+
+                    // noinspection JSUnresolvedFunction
+                    io.in(socket.room).emit('surveyResults', {survey: survey, losers: losers});
+                    updateAndEmitGame(socket.room)
+
+                } else {
+                    console.log("Wait for users to answer: " + JSON.stringify(users.length));
+
+                    updateAndEmitGame(socket.room)
+
+                }
+
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+    });
 
     let emitSipsTo = function (socketId) {
 
         let game = gameMap.get(socket.room);
         game.players.forEach((player) => {
             if (socketId === player.socketId) {
-                player.sips += game.multiplier * player.multiplier * 1
+                let sipPenalty = game.multiplier * player.multiplier * 1;
+                player.sips += sipPenalty;
+
                 //TODO emit sip event
                 console.log("Emitting sips to: " + JSON.stringify(player))
+
+                io.to(player.socketId).emit('sip', {sips: sipPenalty});
                 io.to(player.socketId).emit('updateUser', {user: player});
             }
         })
@@ -179,74 +318,6 @@ io.on('connection', (socket) => {
 
     };
 
-
-    socket.on('surveyAnswer', (data) => {
-        if (!socket.user || !socket.room) return;
-
-        let survey = gameMap.get(socket.room).currentCard;
-
-        let userAnswer = data['answer'];
-
-        socket.user.hasAnswered = true;
-        survey.answerCount++;
-
-        console.log(JSON.stringify(socket.user.name) + " answered " + data['survey'].question + " \n with option: " + data['answer'] + " \n" +
-            "in room: " + socket.room)
-
-        // add user answer to currentCard in game
-        survey.options.forEach((option) => {
-            if (option.title === userAnswer) {
-                option.voters.push(socket.user);
-                option.answerCount++;
-            }
-        });
-
-        waitForUsers()
-            .then((users) => {
-                if (users.length === 0) {
-                    // close survey
-                    survey.closed = true;
-                    console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey.question))
-
-                    // to provide info about remaining players
-                    gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
-
-                    let firstOption = survey.options[0];
-                    let secondOption = survey.options[1];
-                    console.log(firstOption.title + " x" + firstOption.voters.length, secondOption.title + " x" + secondOption.voters.length)
-
-                    let losers = firstOption > secondOption ?
-                        survey.options[1].voters :
-                        secondOption > firstOption ?
-                            survey.options[0].voters : [];
-
-
-                    console.log("LOSERS ARE: " + JSON.stringify(losers));
-
-                    losers.forEach((loser) => {
-                        emitSipsTo(loser.socketId);
-                    })
-
-                    // noinspection JSUnresolvedFunction
-                    io.in(socket.room).emit('surveyResults', {survey: survey, losers: losers});
-                    updateAndEmitGame(socket.room)
-
-                } else {
-                    console.log("Wait for users to answer: " + JSON.stringify(users.length));
-
-                    // to provide info about remaining players
-                    gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
-                    updateAndEmitGame(socket.room)
-
-                }
-
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-
-    });
-
     //returns all users who have not answered yet
     function waitForUsers() {
         return new Promise(resolve => {
@@ -272,6 +343,7 @@ io.on('connection', (socket) => {
         io.in(socket.room).clients((error, clients) => {
             if (error) throw error;
             const randomClientId = clients[Math.floor(Math.random() * clients.length)];
+            if (!randomClientId) return;
             let randomUser = io.sockets.connected[randomClientId].user;
             gameMap.get(socket.room).admin = randomUser;
         });
@@ -304,7 +376,9 @@ io.on('connection', (socket) => {
         } else {
             if (socket.user === gameMap.get(socket.room).admin) {
                 console.log("admin left");
-                setNewRandomAdmin();
+                if (gameMap.get(socket.room).players.length > 0) {
+                    setNewRandomAdmin();
+                }
             }
             if (socket.room) {
                 io.to(socket.room).emit('users-changed', {user: socket.user, event: 'left'});
@@ -662,6 +736,26 @@ function compareGuessAnswer(rankingA, rankingB) {
 
     if (diffAbsA < diffAbsB) return -1;
     if (diffAbsB < diffAbsA) return 1;
+
+    return 0;
+
+}
+
+function compareQuizAnswer(rankingA, rankingB) {
+    //compare quiz answers. if both are correct / incorrect the time decides who won
+    let isCorrectA = rankingA.answer.isCorrect;
+    let isCorrectB = rankingB.answer.isCorrect;
+
+    let timeA = rankingA.time;
+    let timeB = rankingB.time;
+
+    if ((isCorrectA && isCorrectB) || (!isCorrectA && !isCorrectB)) {
+        if (timeA < timeB) return -1;
+        if (timeB < timeA) return 1;
+    } else {
+        if (isCorrectA) return -1;
+        else return 1;
+    }
 
     return 0;
 

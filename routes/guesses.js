@@ -436,7 +436,7 @@ module.exports = [
         ranking: []
     }, {
         category: 'guess',
-        question: 'Wie viele Minuten verbringt man töglich mit Kauen?',
+        question: 'Wie viele Minuten verbringt man täglich mit Kauen?',
         answer: 30,
         answerCount: 0,
         unit: 'Minuten',
@@ -554,6 +554,22 @@ module.exports = [
         answer: 7000,
         answerCount: 0,
         unit: 'Tonnen',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Einige Monate haben 30, einige 31 Tage. Wie viele haben 28 Tage?',
+        answer: 12,
+        answerCount: 0,
+        unit: 'Monate',
+        closed: false,
+        ranking: []
+    },{
+        category: 'guess',
+        question: 'Ein Bauer hat 16 Schafe. Fast alle sterben, außer 9. Wie viele Schafe bleiben übrig?',
+        answer: 9,
+        answerCount: 0,
+        unit: 'Schafe',
         closed: false,
         ranking: []
     }
