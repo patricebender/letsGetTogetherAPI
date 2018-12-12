@@ -719,5 +719,448 @@ module.exports = [
         ],
         ranking: [],
         wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Was ist die Top-Level-Domain (TLD) von Schweden?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                text: ".se",
+                isCorrect: true
+            },
+            {
+                text: ".sc"
+            }
+            ,
+            {
+                text: ".sw"
+            },
+            {
+                text: ".sn"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Welche Dateierweiterung gehört zu Photoshop?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                text: ".pdf"
+            },
+            {
+                text: ".psd",
+                isCorrect: true
+            }
+            ,
+            {
+                text: ".psp"
+            },
+            {
+                text: ".ps"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Was bedeutet DOS?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                text: "desk operator system"
+            },
+            {
+                text: "disc opus system"
+            }
+            ,
+            {
+                text: "desk opus system"
+            },
+            {
+                text: "disc operating system",
+                isCorrect: true
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Welches Systemprogramm eines PC ist direkt nach dem Einschalten bereit?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                text: "Lisp"
+            },
+            {
+                text: "UEFI",
+                isCorrect: true
+            }
+            ,
+            {
+                text: "UMTS"
+            },
+            {
+                text: "HTML"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Welches Systemprogramm eines PC ist direkt nach dem Einschalten bereit?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                text: "Lisp"
+            },
+            {
+                text: "UEFI",
+                isCorrect: true
+            }
+            ,
+            {
+                text: "UMTS"
+            },
+            {
+                text: "HTML"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Welche Firma hat Bill Gates gegründet?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                text: "SAP"
+            },
+            {
+                text: "Microsoft",
+                isCorrect: true
+            }
+            ,
+            {
+                text: "Apple"
+            },
+            {
+                text: "Dell"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Wie sprechen Italiener(innen) ihren Schatz an?',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                text: "tresore mio"
+            }
+            ,
+            {
+                text: "tesoro mio",
+                isCorrect: true
+            },
+            {
+                text: "risotto grande"
+            },
+            {
+                text: "tresoro mio"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Ich liebe dich auf Chinesich sagen ist ganz easy, nämlich...',
+        answerCount: 0,
+        closed: false,
+        options: [
+            {
+                text: "Wo ai ni",
+                isCorrect: true
+            }
+            ,
+            {
+                text: "Boi ha no"
+            },
+            {
+                text: "Wo ai luóbo"
+            },
+            {
+                text: "Wǒ zhèngzài zhǔ"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Was ist ein Aphrodisiakum?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "Liebesgöttin"
+            },
+            {
+                text: "Verhütungsmittel"
+            },
+            {
+                text: "Sexspielzeug"
+            }, {
+                text: "Luststeigerungsmittel",
+                isCorrect: true
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Wie oft fand bereits in England eine Herrenfußball-WM (bis 2018) statt?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "noch nie"
+            },
+            {
+                text: "zweimal"
+            },
+            {
+                text: "einmal",
+                isCorrect: true
+            },
+            {
+                text: "dreimal"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Gegen wen gewann Frankreich das Fußball-EM-Finale 2000?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "Italien",
+                isCorrect: true
+            },
+            {
+                text: "Deutschland"
+            },
+            {
+                text: "Portugal"
+            },
+            {
+                text: "Holland"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Wieviel Liter hat ein Barrel?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "59"
+            },
+            {
+                text: "159",
+                isCorrect: true
+            },
+            {
+                text: "256"
+            },
+            {
+                text: "109"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Wie viele Tage hat der Monat Juni?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "28"
+            },
+            {
+                text: "29"
+            },
+            {
+                text: "30",
+                isCorrect: true
+            },
+            {
+                text: "31"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Wer erhielt sowohl den Physik- als auch den Chemie-Nobelpreis?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "Marie Curie",
+                isCorrect: true
+            },
+            {
+                text: "Albert Einstein"
+            },
+            {
+                text: "Max Planch"
+            },
+            {
+                text: "Max von Laue"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Welcher Bereich der Logik ist die Grundlage für alle Bereiche dieser Disziplin?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "temporale Logik"
+            },
+            {
+                text: "deontische Logik"
+            },
+            {
+                text: "Aussagenlogik",
+                isCorrect: true
+            },
+            {
+                text: "axiomische Logik"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Was bedeutet Al Qaida?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "Freiheit, Unabhängigkeit"
+            },
+            {
+                text: "Grundlage, Fundament",
+                isCorrect: true
+            },
+            {
+                text: "Der Heilige Krieg"
+            },
+            {
+                text: "Der wahre Glaube"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Einstein sagte: `Nichts ist schneller als...`?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "der Blitz"
+            },
+            {
+                text: "der Sturm"
+            },
+            {
+                text: "das Licht",
+                isCorrect: true
+            },
+            {
+                text: "der Todesstern"
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Kann man ein Ei im Mikrowellenherd hart kochen?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "Ja"
+            },
+            {
+                text: "Nein",
+                isCorrect: true
+
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
+    }, {
+        category: 'quiz',
+        question: 'Wie groß ist ein Lichtjahr?',
+        answerCount: 0,
+        closed: false,
+        options: [
+
+
+            {
+                text: "9.4605 Bilionen Jahre"
+            },
+            {
+                text: "9.4605 Trillionen Jahre"
+
+            }, {
+                text: "9.4605 Millionen Kilometer"
+            },
+            {
+                text: "9.4605 Bilionen Kilometer",
+                isCorrect: true
+
+            }
+        ],
+        ranking: [],
+        wrongAnswerCount: 0,
     }
 ]

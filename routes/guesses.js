@@ -572,5 +572,13 @@ module.exports = [
         unit: 'Schafe',
         closed: false,
         ranking: []
+    },{
+        category: 'guess',
+        question: 'Wieviel Bytes hat 1Gb?',
+        answer: 1000000000,
+        answerCount: 0,
+        unit: 'Byte',
+        closed: false,
+        ranking: []
     }
 ]
