@@ -1,9 +1,9 @@
 module.exports = [{
-    category: 'survey',
-    question: 'Lieber kreativ oder genial?',
-    answerCount: 0,
-    closed: false,
-    options: [
+    "category": "survey",
+    "question": "Lieber kreativ oder genial?",
+    "answerCount": 0,
+    "closed": false,
+    "options": [
         {
             "title": "Kreativ",
             "voters": [],
@@ -16,11 +16,11 @@ module.exports = [{
         }
     ]
 }, {
-    category: 'survey',
-    question: 'Lieber Reich & Hässlich oder Arm & Schön?',
-    answerCount: 0,
-    closed: false,
-    options: [
+    "category": "survey",
+    "question": "Lieber Reich & Hässlich oder Arm & Schön?",
+    "answerCount": 0,
+    "closed": false,
+    "options": [
         {
             "title": "Reich & Hässlich",
             "voters": [],
@@ -34,11 +34,11 @@ module.exports = [{
     ]
 },
     {
-        category: 'survey',
-        question: 'How I met your mother oder The Big Bang Theory?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "How I met your mother oder The Big Bang Theory?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "How I met your Mother",
                 "voters": [],
@@ -51,11 +51,11 @@ module.exports = [{
             }
         ]
     },{
-        category: 'survey',
-        question: 'Doppelkinn oder Bierbauch?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Doppelkinn oder Bierbauch?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Doppelkinn",
                 "voters": [],
@@ -69,11 +69,11 @@ module.exports = [{
         ]
     },
     {
-        category: 'survey',
-        question: 'Lesen oder Schreiben verlernen?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Lesen oder Schreiben verlernen?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Schreiben verlernen",
                 "voters": [],
@@ -86,11 +86,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Fliegen oder Unter Wasser Atmen können?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Fliegen oder Unter Wasser Atmen können?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Fliegen",
                 "voters": [],
@@ -103,11 +103,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Glück in der Liebe oder Erfolg im Beruf?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Glück in der Liebe oder Erfolg im Beruf?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Liebe",
                 "voters": [],
@@ -121,11 +121,11 @@ module.exports = [{
         ]
     }
     , {
-        category: 'survey',
-        question: 'Zwanzig Warzen auf dem Körper oder eine Warze in der Größe einer Orange',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Zwanzig Warzen auf dem Körper oder eine Warze in der Größe einer Orange",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Zwanzig Warzen",
                 "voters": [],
@@ -138,11 +138,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Spielekonsole oder PC',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Spielekonsole oder PC",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Spielekonsole",
                 "voters": [],
@@ -155,11 +155,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Windows oder Mac OS ?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Windows oder Mac OS ?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Mac",
                 "voters": [],
@@ -172,11 +172,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Spaß im Job aber kein Geld oder kein Spaß im Job aber viel Geld?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Spaß im Job aber kein Geld oder kein Spaß im Job aber viel Geld?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Spaß aber wenig Geld",
                 "voters": [],
@@ -189,11 +189,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Wenn es Reinkarnation gäbe, würdest du als Mensch oder als Tier wiedergeboren werden wollen?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Wenn es Reinkarnation gäbe, würdest du als Mensch oder als Tier wiedergeboren werden wollen?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Mensch",
                 "voters": [],
@@ -206,11 +206,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Jeden Tag 4 Stunden oder jeden Tag 16 Stunden schlafen müssen?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Jeden Tag 4 Stunden oder jeden Tag 16 Stunden schlafen müssen?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "4 Stunden",
                 "voters": [],
@@ -223,11 +223,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Eine Woche nicht Duschen oder eine Woche nicht Zähneputzen?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Eine Woche nicht Duschen oder eine Woche nicht Zähneputzen?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Woche nicht Duschen",
                 "voters": [],
@@ -240,11 +240,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Dumme Kinder aber selbst intelligent sein oder intelligente Kinder aber selbst dumm sein?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Dumme Kinder aber selbst intelligent sein oder intelligente Kinder aber selbst dumm sein?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Dumme Kinder & Schlau sein",
                 "voters": [],
@@ -257,11 +257,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Nie wieder chatten oder nie wieder telefonieren?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Nie wieder chatten oder nie wieder telefonieren?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Nie wieder chatten",
                 "voters": [],
@@ -274,11 +274,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Braun oder Blond?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Braun oder Blond?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Braun",
                 "voters": [],
@@ -291,11 +291,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Informatiker vs. Mathematiker',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Informatiker vs. Mathematiker",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Informatiker",
                 "voters": [],
@@ -308,11 +308,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Verhungern vs. Verdursten',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Verhungern vs. Verdursten",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Verhungern",
                 "voters": [],
@@ -326,11 +326,11 @@ module.exports = [{
         ]
     }
     , {
-        category: 'survey',
-        question: 'Kaffee vs. Tee',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Kaffee vs. Tee",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Kaffee",
                 "voters": [],
@@ -343,11 +343,11 @@ module.exports = [{
             }
         ]
     } , {
-        category: 'survey',
-        question: 'Nur noch flüstern oder nur noch schrein können?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Nur noch flüstern oder nur noch schrein können?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Flüstern",
                 "voters": [],
@@ -360,11 +360,11 @@ module.exports = [{
             }
         ]
     } , {
-        category: 'survey',
-        question: 'Jeden Tag Sport oder nie wieder Sport?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Jeden Tag Sport oder nie wieder Sport?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Jeden Tag",
                 "voters": [],
@@ -377,11 +377,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…nie mehr eine Hose tragen können oder nie mehr ein Oberteil?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…nie mehr eine Hose tragen können oder nie mehr ein Oberteil?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Keine Hose",
                 "voters": [],
@@ -395,11 +395,11 @@ module.exports = [{
         ]
     }
     , {
-        category: 'survey',
-        question: '…nie wieder ernst sein oder nie wieder lachen können?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…nie wieder ernst sein oder nie wieder lachen können?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Nie Ernst",
                 "voters": [],
@@ -412,11 +412,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…für immer in einer Großstadt oder für immer auf dem Land leben?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…für immer in einer Großstadt oder für immer auf dem Land leben?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Großstadt",
                 "voters": [],
@@ -429,11 +429,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…in der Zukunft wiedergeboren werden oder in der Vergangenheit?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…in der Zukunft wiedergeboren werden oder in der Vergangenheit?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Zukunft",
                 "voters": [],
@@ -446,11 +446,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…Gedankenlesen oder Zeitreisen können?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…Gedankenlesen oder Zeitreisen können?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Gedankenlesen",
                 "voters": [],
@@ -463,11 +463,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…nie mehr Klopapier benutzen oder dir nie wieder die Hände waschen dürfen?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…nie mehr Klopapier benutzen oder dir nie wieder die Hände waschen dürfen?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Kein Klopapier",
                 "voters": [],
@@ -480,11 +480,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…für immer auf Fleisch oder für immer auf Gemüse/Obst verzichten?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…für immer auf Fleisch oder für immer auf Gemüse/Obst verzichten?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Gemüse/Obst",
                 "voters": [],
@@ -497,11 +497,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…bis zum Ende deines Lebens im Gefängnis sitzen oder sofort hingerichtet werden?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…bis zum Ende deines Lebens im Gefängnis sitzen oder sofort hingerichtet werden?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Für immer Knast",
                 "voters": [],
@@ -514,11 +514,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…mit 10 anderen Menschen in einer Wohnung leben oder für immer allein?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…mit 10 anderen Menschen in einer Wohnung leben oder für immer allein?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "WG mit 10",
                 "voters": [],
@@ -531,11 +531,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…bei jedem Song automatisch mitsingen oder mittanzen müssen?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…bei jedem Song automatisch mitsingen oder mittanzen müssen?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Singen",
                 "voters": [],
@@ -548,11 +548,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…jedes Wochenende feiern gehen oder jedes Wochenende chillen müssen?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…jedes Wochenende feiern gehen oder jedes Wochenende chillen müssen?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Feiern",
                 "voters": [],
@@ -565,11 +565,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…über den Flur eines Krankenhauses oder einem über den Hintern lecken?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…über den Flur eines Krankenhauses oder einem über den Hintern lecken?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Krankenhaus Flur",
                 "voters": [],
@@ -582,11 +582,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…nie wieder schwitzen oder nie wieder frieren?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…nie wieder schwitzen oder nie wieder frieren?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Nie schwitzen",
                 "voters": [],
@@ -599,11 +599,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…nie wieder das Meer oder nie mehr die Berge sehen können?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…nie wieder das Meer oder nie mehr die Berge sehen können?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Nie mehr Meer",
                 "voters": [],
@@ -616,11 +616,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: '…365 Tage denselben Tag erleben oder ein Jahr deines Lebens opfern?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "…365 Tage denselben Tag erleben oder ein Jahr deines Lebens opfern?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "365 mal selben Tag erleben",
                 "voters": [],
@@ -633,11 +633,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Traube oder Orange',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Traube oder Orange",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Traube",
                 "voters": [],
@@ -650,11 +650,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Chinesisches oder Italienisches Essen?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Chinesisches oder Italienisches Essen?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Chinesisches",
                 "voters": [],
@@ -667,11 +667,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Fußball vs. Basketball',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Fußball vs. Basketball",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Fußball",
                 "voters": [],
@@ -684,11 +684,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Taxifahrer oder Busfahrer?',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Taxifahrer oder Busfahrer?",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "Taxifahrer",
                 "voters": [],
@@ -701,11 +701,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'iOS oder Android',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "iOS oder Android",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "iOS",
                 "voters": [],
@@ -718,11 +718,11 @@ module.exports = [{
             }
         ]
     }, {
-        category: 'survey',
-        question: 'Würdest du lieber von…',
-        answerCount: 0,
-        closed: false,
-        options: [
+        "category": "survey",
+        "question": "Würdest du lieber von…",
+        "answerCount": 0,
+        "closed": false,
+        "options": [
             {
                 "title": "…einer Horde entengroßer Pferde angegriffen werden?",
                 "voters": [],
