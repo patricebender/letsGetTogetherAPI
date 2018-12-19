@@ -14,6 +14,7 @@ let cards = {}
 cards['surveys'] = require('./surveys');
 cards['guess'] = require('./guesses');
 cards['quiz'] = require('./quizzes');
+cards['challenge'] = require('./challenges');
 
 let cardCount = cards['surveys'].length + cards['guess'].length + cards['quiz'].length;
 console.log("Number of Cards: " + cardCount);
@@ -177,7 +178,7 @@ io.on('connection', (socket) => {
 
 
                     // everyone answered correct, so the slowest player drink
-                    if(quiz.wrongAnswerCount === 0){
+                    if (quiz.wrongAnswerCount === 0) {
                         console.log("everyone answered correctly, slowest player drink");
                         emitSipsTo(quizRanking[quizRanking.length - 1].player.socketId);
                         quizRanking[quizRanking.length - 1].sips = quizRanking[quizRanking.length - 1].player.multiplier * 1;
@@ -271,12 +272,37 @@ io.on('connection', (socket) => {
 
     });
 
-    let emitSipsTo = function (socketId) {
+    socket.on('challengeAccepted', () => {
+        if (!socket.user || !socket.room) return;
+
+        let challenge = gameMap.get(socket.room).currentCard;
+        console.log(socket.user.name + "accepted the challenge. ");
+
+        challenge.isAccepted = true;
+        updateAndEmitGame(socket.room)
+    });
+
+    socket.on('challengeDeclined', () => {
+        if (!socket.user || !socket.room) return;
+
+
+        let challenge = gameMap.get(socket.room).currentCard;
+        if(challenge.closed) return ;
+
+        console.log(socket.user.name + "declined the challenge. ");
+        emitSipsTo(socket.user.socketId, challenge.sips);
+
+        challenge.isDeclined = true;
+        challenge.closed  = true;
+        updateAndEmitGame(socket.room)
+    });
+
+    let emitSipsTo = function (socketId, sips) {
 
         let game = gameMap.get(socket.room);
         game.players.forEach((player) => {
             if (socketId === player.socketId) {
-                let sipPenalty = game.multiplier * player.multiplier * 1;
+                let sipPenalty = game.multiplier * player.multiplier * sips ? sips :1;
                 player.sips += sipPenalty;
 
                 //TODO emit sip event
@@ -306,8 +332,16 @@ io.on('connection', (socket) => {
                 game.currentCard = randomCard;
                 game.currentCategory = randomCard.category;
 
+                if (game.currentCategory === 'challenge') {
+                    io.in(socket.room).clients((error, clients) => {
+                        if (error) throw error;
+                        game.currentCard.player = getRandomPlayers(1, clients)[0];
+                    });
+                }
                 console.log("emitting " + JSON.stringify(randomCard.category));
                 io.in(socket.room).emit('newCard', {card: game.currentCard});
+
+
             }
 
 
@@ -342,9 +376,7 @@ io.on('connection', (socket) => {
 
         io.in(socket.room).clients((error, clients) => {
             if (error) throw error;
-            const randomClientId = clients[Math.floor(Math.random() * clients.length)];
-            if (!randomClientId) return;
-            let randomUser = io.sockets.connected[randomClientId].user;
+            let randomUser = getRandomPlayers(1, clients)[0];
             gameMap.get(socket.room).admin = randomUser;
         });
     }
@@ -727,6 +759,19 @@ function isCategoryEnabled(game, category) {
         }
     });
     return isEnabled;
+}
+
+function getRandomPlayers(howMany, players) {
+    let selectedPlayers = [];
+
+    while (howMany > 0 && players.length > 0) {
+        // get random id from given array and remove it from array
+        let randomClientId = players.splice(Math.floor(Math.random() * players.length), 1);
+        selectedPlayers.push(io.sockets.connected[randomClientId].user);
+        howMany--;
+    }
+
+    return selectedPlayers;
 }
 
 function compareGuessAnswer(rankingA, rankingB) {
