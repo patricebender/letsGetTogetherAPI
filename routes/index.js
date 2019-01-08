@@ -35,6 +35,8 @@ io.on('connection', (socket) => {
                 userList.push(io.sockets.connected[client].user)
             })
 
+            if (!game) return;
+
             //refresh player list in game object
             game.players = userList;
             game.playerCount = userList.length;
@@ -53,8 +55,7 @@ io.on('connection', (socket) => {
 
     socket.on('guessAnswer', (data) => {
         if (!socket.user || !socket.room) return;
-        let game = gameMap.get(socket.room);
-        let guess = game.currentCard;
+        let guess = gameMap.get(socket.room).currentCard;
 
         let userAnswer = data['answer'];
 
@@ -73,38 +74,7 @@ io.on('connection', (socket) => {
 
             if (users.length === 0) {
                 //close guess
-                guess.closed = true;
-                console.log("Everyone has answered. Sort Ranking and emit results for Guess: " + JSON.stringify(guess.question))
-                guess.ranking.sort(compareGuessAnswer);
-
-                // big groups should drink more e.g. for 10 player I want the last two to drink.
-                let howManyDrink = guess.answerCount / 5 < 1 ? 1 : Math.floor(guess.answerCount / 5);
-                console.log(howManyDrink + " drink!")
-
-
-                //find last n players with baddest guess
-                let rank = 1;
-                guess.ranking.forEach((answer, index) => {
-                    //last index reached
-                    if (!guess.ranking[index + 1]) {
-                        answer.rankNumber = rank;
-                    } else {
-                        //same rank for same difference so don't increase rank count
-                        if (answer.difference === guess.ranking[index + 1].difference) {
-                            answer.rankNumber = rank;
-                        } else {
-                            answer.rankNumber = rank;
-                            rank++;
-                        }
-                    }
-                });
-
-                // calculate sips
-                calcSips(guess.ranking, howManyDrink);
-
-                // noinspection JSUnresolvedFunction
-                io.in(socket.room).emit('guessResults', {guess: guess, ranking: guess.ranking});
-                updateAndEmitGame(socket.room)
+                closeAndEmitGuess();
             } else {
                 console.log("Wait for users to answer: " + users.length)
                 updateAndEmitGame(socket.room)
@@ -169,34 +139,8 @@ io.on('connection', (socket) => {
             .then((users) => {
                 gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
                 if (users.length === 0) {
-                    console.log("Everyone has answered.")
-                    quiz.closed = true;
-
-                    let quizRanking = quiz.ranking;
-
-                    quizRanking.sort(compareQuizAnswer);
-
-
-                    // everyone answered correct, so the slowest player drink
-                    if (quiz.wrongAnswerCount === 0) {
-                        console.log("everyone answered correctly, slowest player drink");
-                        emitSipsTo(quizRanking[quizRanking.length - 1].player.socketId);
-                        quizRanking[quizRanking.length - 1].sips = quizRanking[quizRanking.length - 1].player.multiplier * 1;
-                    }
-                    // everyone with wrong answer drink
-                    quizRanking.forEach((rank) => {
-                        if (!rank.answer.isCorrect) {
-                            rank.sips = rank.player.multiplier * 1;
-                            emitSipsTo(rank.player.socketId);
-                        }
-                    });
-
-
-                    console.log(JSON.stringify(quizRanking));
-
-
-                    io.in(socket.room).emit('quizResults', {quiz: quiz, ranking: quizRanking});
-                    updateAndEmitGame(socket.room);
+                    // close quiz
+                    closeAndEmitQuiz();
                 } else {
                     console.log("Wait for users to answer: " + JSON.stringify(users.length));
                     updateAndEmitGame(socket.room);
@@ -234,29 +178,7 @@ io.on('connection', (socket) => {
                 gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
                 if (users.length === 0) {
                     // close survey
-                    survey.closed = true;
-                    console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey.question))
-
-
-                    let firstOption = survey.options[0];
-                    let secondOption = survey.options[1];
-                    console.log(firstOption.title + " x" + firstOption.voters.length, secondOption.title + " x" + secondOption.voters.length)
-
-                    let losers = firstOption.voters.length > secondOption.voters.length ?
-                        survey.options[1].voters :
-                        secondOption.voters.length > firstOption.voters.length ?
-                            survey.options[0].voters : [];
-
-
-                    console.log("LOSERS ARE: " + JSON.stringify(losers));
-
-                    losers.forEach((loser) => {
-                        emitSipsTo(loser.socketId);
-                    })
-
-                    // noinspection JSUnresolvedFunction
-                    io.in(socket.room).emit('surveyResults', {survey: survey, losers: losers});
-                    updateAndEmitGame(socket.room)
+                    closeAndEmitSurvey();
 
                 } else {
                     console.log("Wait for users to answer: " + JSON.stringify(users.length));
@@ -271,6 +193,145 @@ io.on('connection', (socket) => {
             })
 
     });
+
+    let closeAndEmitCurrentCard = function () {
+        let currentCategory = gameMap.get(socket.room).currentCard.category;
+        switch (currentCategory) {
+            case "guess":
+                closeAndEmitGuess();
+                break;
+            case "quiz":
+                closeAndEmitQuiz()
+                break;
+            case "survey":
+                closeAndEmitSurvey();
+                break;
+            case "challenge":
+                closeAndEmitChallenge()
+                break;
+            default:
+                console.log(JSON.stringify(currentCategory) + " is not known :O")
+
+        }
+    };
+
+    let closeAndEmitGuess = function () {
+        let guess = gameMap.get(socket.room).currentCard;
+        guess.closed = true;
+        console.log("Everyone has answered. Sort Ranking and emit results for Guess: " + JSON.stringify(guess.question))
+        guess.ranking.sort(compareGuessAnswer);
+
+        // big groups should drink more e.g. for 10 player I want the last two to drink.
+        let howManyDrink = guess.answerCount / 5 < 1 ? 1 : Math.floor(guess.answerCount / 5);
+        console.log(howManyDrink + " drink!")
+
+
+        //find last n players with baddest guess
+        let rank = 1;
+        guess.ranking.forEach((answer, index) => {
+            //last index reached
+            if (!guess.ranking[index + 1]) {
+                answer.rankNumber = rank;
+            } else {
+                //same rank for same difference so don't increase rank count
+                if (answer.difference === guess.ranking[index + 1].difference) {
+                    answer.rankNumber = rank;
+                } else {
+                    answer.rankNumber = rank;
+                    rank++;
+                }
+            }
+        });
+
+        // calculate sips
+        calcSips(guess.ranking, howManyDrink);
+
+        // noinspection JSUnresolvedFunction
+        io.in(socket.room).emit('guessResults', {guess: guess, ranking: guess.ranking});
+        updateAndEmitGame(socket.room)
+    };
+
+    let closeAndEmitSurvey = function () {
+        let survey = gameMap.get(socket.room).currentCard;
+        survey.closed = true;
+        console.log("Everyone has answered. Emitting Results for Survey: " + JSON.stringify(survey.question))
+
+
+        let firstOption = survey.options[0];
+        let secondOption = survey.options[1];
+        console.log(firstOption.title + " x" + firstOption.voters.length, secondOption.title + " x" + secondOption.voters.length)
+
+        let losers = firstOption.voters.length > secondOption.voters.length ?
+            survey.options[1].voters :
+            secondOption.voters.length > firstOption.voters.length ?
+                survey.options[0].voters : [];
+
+
+        console.log("LOSERS ARE: " + JSON.stringify(losers));
+
+        losers.forEach((loser) => {
+            emitSipsTo(loser.socketId);
+        })
+
+        // noinspection JSUnresolvedFunction
+        io.in(socket.room).emit('surveyResults', {survey: survey, losers: losers});
+        updateAndEmitGame(socket.room)
+    };
+
+    socket.on('challengedPlayerLeaves', () => {
+        console.log("challengedPlayerLeaves");
+    })
+
+    let closeAndEmitChallenge = function () {
+        let challenge = gameMap.get(socket.room).currentCard;
+        challenge.closed = true;
+        console.log("Everyone has answered. Emitting Results for Challenge: " + JSON.stringify(challenge.title))
+
+
+        let upVotes = challenge.upVotes;
+        let downVotes = challenge.downVotes;
+        console.log("upVotes x " + upVotes + " \n" +
+            "downVotes x " + downVotes);
+
+        downVotes > upVotes ? challenge.failed = true : challenge.failed = false;
+        challenge.failed ? emitSipsTo(challenge.player.socketId, 5) : "" ;
+
+        updateAndEmitGame(socket.room)
+    };
+
+    let closeAndEmitQuiz = function () {
+        let quiz = gameMap.get(socket.room).currentCard;
+
+        console.log("Everyone has answered.")
+        quiz.closed = true;
+
+        let quizRanking = quiz.ranking;
+
+        quizRanking.sort(compareQuizAnswer);
+
+
+        // everyone answered correct, so the slowest player drink
+        if (quiz.wrongAnswerCount === 0) {
+            console.log("everyone answered correctly, slowest player drink");
+            emitSipsTo(quizRanking[quizRanking.length - 1].player.socketId);
+            quizRanking[quizRanking.length - 1].sips = quizRanking[quizRanking.length - 1].player.multiplier * 1;
+        }
+        // everyone with wrong answer drink
+        quizRanking.forEach((rank) => {
+            if (!rank.answer.isCorrect) {
+                rank.sips = rank.player.multiplier * 1;
+                emitSipsTo(rank.player.socketId);
+            }
+        });
+
+
+        console.log(JSON.stringify(quizRanking));
+
+
+        io.in(socket.room).emit('quizResults', {quiz: quiz, ranking: quizRanking});
+        updateAndEmitGame(socket.room);
+    }
+
 
     socket.on('challengeAccepted', () => {
         if (!socket.user || !socket.room) return;
@@ -287,14 +348,45 @@ io.on('connection', (socket) => {
 
 
         let challenge = gameMap.get(socket.room).currentCard;
-        if(challenge.closed) return ;
 
         console.log(socket.user.name + "declined the challenge. ");
         emitSipsTo(socket.user.socketId, challenge.sips);
 
         challenge.isDeclined = true;
-        challenge.closed  = true;
+        challenge.closed = true;
         updateAndEmitGame(socket.room)
+    });
+
+    socket.on('challengeVote', (data) => {
+        if (!socket.user || !socket.room) return;
+        socket.user.hasAnswered = true;
+        let challenge = gameMap.get(socket.room).currentCard;
+
+        let upVote = data.success ? true : false;
+        console.log(socket.user.name, upVote ? "up" : "down", "votes challenge");
+        upVote ? challenge.upVotes++ : challenge.downVotes++;
+
+        waitForUsers()
+            .then((users) => {
+                // -1 => dont wait for challenged player
+                gameMap.get(socket.room).currentCard.playerLeftCount = users.length - 1;
+                if (gameMap.get(socket.room).currentCard.playerLeftCount === 0) {
+                    // close survey
+                    closeAndEmitChallenge();
+
+                } else {
+                    console.log("Wait for users to answer: " + JSON.stringify(users.length));
+
+                    updateAndEmitGame(socket.room)
+
+                }
+
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+
     });
 
     let emitSipsTo = function (socketId, sips) {
@@ -302,10 +394,9 @@ io.on('connection', (socket) => {
         let game = gameMap.get(socket.room);
         game.players.forEach((player) => {
             if (socketId === player.socketId) {
-                let sipPenalty = game.multiplier * player.multiplier * sips ? sips :1;
+                let sipPenalty = game.multiplier * player.multiplier * sips ? sips : 1;
                 player.sips += sipPenalty;
 
-                //TODO emit sip event
                 console.log("Emitting sips to: " + JSON.stringify(player))
 
                 io.to(player.socketId).emit('sip', {sips: sipPenalty});
@@ -395,7 +486,18 @@ io.on('connection', (socket) => {
         if (!socket.user.hasAnswered && game) {
             if (!isEmpty(game.currentCard)) {
                 console.log(JSON.stringify(game.currentCard))
-                --gameMap.get(socket.room).currentCard.playerLeftCount;
+                let playerLeftCount = --gameMap.get(socket.room).currentCard.playerLeftCount;
+
+                // TODO need better solution than this..
+                // if challenged player leaves the game, end challenge.
+                if(game.currentCard.category === "challenge" && game.currentCard.player.socketId === socket.user.socketId) {
+                    game.currentCard.playerQuit = true;
+                    closeAndEmitChallenge()
+                }
+                if (playerLeftCount === 0) {
+                    console.log("closing current card because everyone has answered..");
+                    closeAndEmitCurrentCard();
+                }
             }
         }
 

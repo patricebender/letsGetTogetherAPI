@@ -6,12 +6,13 @@ module.exports = [
         "player": {},
         "sips": 5,
 
-        "succeedVotes": 0,
-        "failVotes": 0,
+        "upVotes": 0,
+        "downVotes": 0,
 
         "isAccepted": false,
         "isDeclined": false,
         "failed": false,
+        "playerQuit": false
 
     }
 ]
