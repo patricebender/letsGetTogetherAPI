@@ -16,7 +16,7 @@ cards['guess'] = require('./guesses');
 cards['quiz'] = require('./quizzes');
 cards['challenge'] = require('./challenges');
 
-let cardCount = cards['surveys'].length + cards['guess'].length + cards['quiz'].length;
+let cardCount = cards['surveys'].length + cards['guess'].length + cards['quiz'].length + cards['challenge'].length ;
 console.log("Number of Cards: " + cardCount);
 
 io.on('connection', (socket) => {
@@ -294,7 +294,7 @@ io.on('connection', (socket) => {
             "downVotes x " + downVotes);
 
         downVotes > upVotes ? challenge.failed = true : challenge.failed = false;
-        challenge.failed ? emitSipsTo(challenge.player.socketId, 5) : "" ;
+        challenge.failed ? emitSipsTo(challenge.player.socketId, 5) : "";
 
         updateAndEmitGame(socket.room)
     };
@@ -395,7 +395,7 @@ io.on('connection', (socket) => {
         game.players.forEach((player) => {
             if (socketId === player.socketId) {
                 let sipPenalty = game.multiplier * player.multiplier * sips ? sips : 1;
-                player.sips += sipPenalty;
+                player.sips += sipPenalty * player.multiplier;
 
                 console.log("Emitting sips to: " + JSON.stringify(player))
 
@@ -405,34 +405,108 @@ io.on('connection', (socket) => {
         })
     }
 
+    let emitRandomCurse = function () {
+
+        emitMultiplierCurse();
+
+    };
+
+    let emitMultiplierCurse = function () {
+
+        io.in(socket.room).clients((error, clients) => {
+            if (error) throw error;
+
+            let randomPlayer = getRandomPlayers(1, clients)[0];
+            let multiplier = Math.floor(Math.random() * 3) + 1;
+            let curseTime = Math.floor(Math.random() * 10) + 1;
+
+            let game = gameMap.get(socket.room);
+
+
+            let multiplierCurse = {
+                roundsLeft: curseTime,
+                multiplier: multiplier,
+                cursedPlayer: randomPlayer.name,
+                playerSocketId: randomPlayer.socketId,
+                category: "multiplierCurse",
+            }
+
+            randomPlayer.multiplier += multiplier;
+            randomPlayer.curses.push(multiplierCurse);
+            game.currentCard = multiplierCurse;
+            game.currentCategory = multiplierCurse.category;
+
+
+            console.log("Multiplier Curse x " + multiplier + " @ " + randomPlayer + " for " + curseTime + "  Rounds: ");
+
+            io.to(randomPlayer.socketId).emit('updateUser', {user: randomPlayer});
+
+            updateAndEmitGame(socket.room);
+
+        });
+
+
+    };
+
+    let reduceCurseTime = function (game) {
+        game.players.forEach((player) => {
+            player.curses.forEach((curse, i) => {
+                console.log("Reducing curse time for " + JSON.stringify(curse))
+                --curse.roundsLeft;
+
+                // remove curse from player
+                if (curse.roundsLeft === 0) {
+                    player.curses == player.curses.splice(i, 1);
+
+                    // reduce multiplier
+                    if (curse.category === 'multiplierCurse') {
+                        player.multiplier -= curse.multiplier;
+                    }
+                }
+
+            });
+            io.to(player.socketId).emit('updateUser', {user: player});
+        });
+    };
+
     let emitRandomCard = function () {
         if (!socket.user || !socket.room) return;
         let game = gameMap.get(socket.room);
 
         if (cardsLeftInGame(game) > 0) {
 
-            // category object with cards array
-            const randomCategory = getRandomCategoryForGame(game);
+            reduceCurseTime(game);
 
+            // random value to determine wheter to cast a curse or not
+            let random = Math.floor(Math.random() * 100);
 
-            if (!randomCategory) {
-                emitGameOver('Keine Karten mehr ☹️');
+            if (random > 90 && game.curseEnabled) {
+                console.log("CURSE CARD, random: ", random);
+                emitRandomCurse();
             } else {
-                // remove and retrieve card from array
-                const randomCard = getRandomCardForCategory(randomCategory);
-                game.currentCard = randomCard;
-                game.currentCategory = randomCard.category;
+                // category object with cards array
+                const randomCategory = getRandomCategoryForGame(game);
 
-                if (game.currentCategory === 'challenge') {
-                    io.in(socket.room).clients((error, clients) => {
-                        if (error) throw error;
-                        game.currentCard.player = getRandomPlayers(1, clients)[0];
-                    });
+
+                if (!randomCategory) {
+                    emitGameOver('Keine Karten mehr ☹️');
+                } else {
+                    // remove and retrieve card from array
+                    const randomCard = getRandomCardForCategory(randomCategory);
+                    game.currentCard = randomCard;
+                    game.currentCategory = randomCard.category;
+
+                    if (game.currentCategory === 'challenge') {
+                        io.in(socket.room).clients((error, clients) => {
+                            if (error) throw error;
+                            game.currentCard.player = getRandomPlayers(1, clients)[0];
+                        });
+                    }
+                    console.log("emitting " + JSON.stringify(randomCard.category));
+                    io.in(socket.room).emit('newCard', {card: game.currentCard});
+
+
                 }
-                console.log("emitting " + JSON.stringify(randomCard.category));
-                io.in(socket.room).emit('newCard', {card: game.currentCard});
-
-
             }
 
 
@@ -504,7 +578,7 @@ io.on('connection', (socket) => {
 
                 // TODO need better solution than this..
                 // if challenged player leaves the game, end challenge.
-                if(game.currentCard.category === "challenge" && game.currentCard.player.socketId === socket.user.socketId) {
+                if (game.currentCard.category === "challenge" && game.currentCard.player.socketId === socket.user.socketId) {
                     game.currentCard.playerQuit = true;
                     closeAndEmitChallenge()
                 }
@@ -650,7 +724,6 @@ io.on('connection', (socket) => {
                 //set socket basic data
                 socket.room = data.room;
 
-
                 let game = {
                     players: [],
                     isOver: false,
@@ -663,7 +736,8 @@ io.on('connection', (socket) => {
                     currentCard: {},
                     currentCategory: 'none',
                     multiplier: 1,
-                    playerCount: 1
+                    playerCount: 1,
+                    curseEnabled: data.curseEnabled,
                 }
 
                 gameMap.set(data.room, game);
