@@ -462,6 +462,20 @@ io.on('connection', (socket) => {
 
     }
 
+    function getClientIds() {
+        return new Promise(resolve => {
+            let users = [];
+            // noinspection JSUnresolvedFunction
+            io.in(socket.room).clients((error, clients) => {
+                clients.forEach((client) => {
+                    users.push(io.sockets.connected[client])
+                })
+
+            });
+            resolve(users);
+        });
+    }
+
 
     let setNewRandomAdmin = function () {
 
