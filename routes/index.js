@@ -294,7 +294,7 @@ io.on('connection', (socket) => {
             "downVotes x " + downVotes);
 
         downVotes > upVotes ? challenge.failed = true : challenge.failed = false;
-        challenge.failed ? emitSipsTo(challenge.player.socketId, 5) : "";
+        challenge.failed ? emitSipsTo(challenge.player.socketId, challenge.sips) : "";
 
         updateAndEmitGame(socket.room)
     };
@@ -394,7 +394,10 @@ io.on('connection', (socket) => {
         let game = gameMap.get(socket.room);
         game.players.forEach((player) => {
             if (socketId === player.socketId) {
-                let sipPenalty = game.multiplier * player.multiplier * sips ? sips : 1;
+                let sipPenalty = sips ? sips : 1;
+                // apply multiplier
+                sipPenalty *= player.multiplier * game.multiplier
+
                 player.sips += sipPenalty * player.multiplier;
 
                 console.log("Emitting sips to: " + JSON.stringify(player))
