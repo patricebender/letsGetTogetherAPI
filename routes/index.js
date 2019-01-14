@@ -398,7 +398,7 @@ io.on('connection', (socket) => {
                 // apply multiplier
                 sipPenalty *= player.multiplier * game.multiplier
 
-                player.sips += sipPenalty * player.multiplier;
+                player.sips += sipPenalty;
 
                 console.log("Emitting sips to: " + JSON.stringify(player))
 
