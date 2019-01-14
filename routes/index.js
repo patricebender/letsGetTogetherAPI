@@ -8,6 +8,13 @@ let io = require('socket.io')(http, {
 
 
 let gameMap = new Map();
+let gameLogs = {
+    totalSips: 0,
+    gamesPlayed: 0,
+    totalPlayers: 0,
+    totalCards: 0,
+}
+
 
 
 let cards = {}
@@ -400,7 +407,10 @@ io.on('connection', (socket) => {
 
                 player.sips += sipPenalty;
 
-                console.log("Emitting sips to: " + JSON.stringify(player))
+                // keep track of sips
+                gameLogs.totalSips += sipPenalty;
+
+                console.log("Emitting sips to: " + JSON.stringify(player));
 
                 io.to(player.socketId).emit('sip', {sips: sipPenalty});
                 io.to(player.socketId).emit('updateUser', {user: player});
@@ -511,6 +521,8 @@ io.on('connection', (socket) => {
 
                 }
             }
+
+            ++gameLogs.totalCards;
 
 
         } else {
@@ -704,6 +716,9 @@ io.on('connection', (socket) => {
 
                 socket.to(socket.room).emit('users-changed', {user: socket.user, event: 'joined'});
                 socket.emit('roomJoinSucceed', {room: socket.room, game: gameMap.get(socket.room)});
+
+                ++gameLogs.totalPlayers;
+
                 updateAndEmitGame(socket.room);
             });
 
@@ -744,11 +759,19 @@ io.on('connection', (socket) => {
                 }
 
                 gameMap.set(data.room, game);
-                console.log(socket.room + " created! \n" +
-                    "Number of games in gameMap: " + gameMap.size);
+
 
                 updateAndEmitGame(socket.room);
                 socket.emit('roomCreated', {room: socket.room, game: game});
+
+                // keep track of played games
+                ++gameLogs.gamesPlayed;
+                ++gameLogs.totalPlayers;
+
+
+                console.log(socket.room + " created! \n" +
+                    "Number of games in gameMap: " + gameMap.size + " \n" +
+                    "gameStatistics" + JSON.stringify(gameLogs));
 
             });
         }
