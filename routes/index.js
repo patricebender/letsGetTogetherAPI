@@ -300,8 +300,8 @@ io.on('connection', (socket) => {
         console.log("upVotes x " + upVotes + " \n" +
             "downVotes x " + downVotes);
 
-        downVotes > upVotes ? challenge.failed = true : challenge.failed = false;
-        challenge.failed ? emitSipsTo(challenge.player.socketId, challenge.sips) : "";
+        downVotes >= upVotes ? challenge.failed = true : challenge.failed = false;
+        challenge.failed ? emitSipsTo(challenge.player.socketId, 5) : "";
 
         updateAndEmitGame(socket.room)
     };
