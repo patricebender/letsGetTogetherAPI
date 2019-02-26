@@ -35,7 +35,7 @@ node routes/index.js
 
 Patrice – info@patrice.codes
 
-Distributed under the GoodBoy license. license. Please do whatever your mom would approve of:
+Distributed under the GoodBoy license. Please do whatever your mom would approve of:
 
 
 ## Contributing
