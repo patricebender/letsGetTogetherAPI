@@ -9,6 +9,8 @@ Depending on the card-category, the further course of the round is dynamic.
 
 ![](header.png)
 
+Checkout the Cheers Frontend [here](https://github.com/GitP4tt/letsGetTogether)
+
 ## Development setup
 
 The `Cheers` Backend is developed using Node.js with Express.js and the Socket.io Server API.
