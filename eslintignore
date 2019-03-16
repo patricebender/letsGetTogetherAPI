@@ -1,0 +1,4 @@
+/.che/**
+/.well-known/**
+/lib/gmap/**
+/util/download/sw.js

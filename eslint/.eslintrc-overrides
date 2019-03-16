@@ -1,0 +1,25 @@
+{
+  "rules": {
+    "indent": [2, "tab"],
+    "no-tabs": 0,
+    "quotes": [2, "double"],
+    "prefer-arrow-callback": 0,
+    "func-names": 0,
+    "prefer-rest-params": 0,
+    "one-var-declaration-per-line": 0,
+    "prefer-promise-reject-errors": 1,
+    "no-prototype-builtins": 0,
+    "no-extend-native": 0,
+    "no-plusplus": 0,
+    "no-console": 1,
+    "no-bitwise": 0,
+    "no-else-return": 0,
+    "no-trailing-spaces": 0,
+    "space-before-function-paren": 0,
+    "one-var": 0,
+    "no-underscore-dangle": 0,
+    "no-restricted-globals": 0,
+    "new-cap": 0,
+    "object-shorthand": 0
+  }
+}

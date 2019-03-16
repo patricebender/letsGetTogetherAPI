@@ -1,0 +1,26 @@
+{
+  "extends": [
+    "./eslint/.eslintrc-best-practices",
+    "./eslint/.eslintrc-errors",
+    "./eslint/.eslintrc-style",
+    "./eslint/.eslintrc-variables",
+    "./eslint/.eslintrc-es6",
+    "./eslint/.eslintrc-overrides"
+  ],
+  "globals": {
+    "google": false
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "amd": true,
+    "mocha": true
+  },
+  "parserOptions": {
+	"ecmaFeatures": {
+	  "experimentalObjectRestSpread": true
+	},
+	 "ecmaVersion": 2016
+	
+  }
+}
