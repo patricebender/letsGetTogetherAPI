@@ -90,43 +90,6 @@ io.on("connection", (socket) => {
 		cardHelper.emitRandomCard();
 		gameHelper.updateAndEmitGame(socket.room);
 	});
-	socket.on("surveyAnswer", (data) => {
-		if (!socket.user || !socket.room) return;
-
-		const survey = gameMap.get(socket.room).currentCard;
-
-		const userAnswer = data.answer;
-
-		socket.user.hasAnswered = true;
-		survey.answerCount++;
-
-		console.log(`${JSON.stringify(socket.user.name)} answered ${data.survey.question} \n with option: ${data.answer} \n`
-			+ `in room: ${socket.room}`);
-
-		// add user answer to currentCard in game
-		survey.options.forEach((option) => {
-			if (option.title === userAnswer) {
-				option.voters.push(socket.user);
-				option.answerCount++;
-			}
-		});
-
-		session.waitForUsers()
-			.then((users) => {
-				gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
-				if (users.length === 0) {
-					// close survey
-					cardHelper.closeAndEmitCurrentCard();
-				} else {
-					console.log(`Wait for users to answer: ${JSON.stringify(users.length)}`);
-
-					gameHelper.updateAndEmitGame(socket.room);
-				}
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	});
 
 	socket.on("newCardRequest", function () {
 		if (!socket.user || !socket.room) return;
