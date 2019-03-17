@@ -1,4 +1,4 @@
-module.exports = function challengeController(io, socket, gameHelper, session) {
+module.exports = function challengeController(io, socket, gameController) {
 
 	const compareQuizAnswer = function (rankingA, rankingB) {
 		// compare quiz answers. if both are correct / incorrect the time decides who won
@@ -17,7 +17,7 @@ module.exports = function challengeController(io, socket, gameHelper, session) {
 		return 0;
 	};
 	const closeAndEmitQuiz = function () {
-		const quiz = gameHelper.getCurrentCard();
+		const quiz = gameController.getCurrentCard();
 
 		console.log("Everyone has answered.");
 		quiz.closed = true;
@@ -30,14 +30,14 @@ module.exports = function challengeController(io, socket, gameHelper, session) {
 		// everyone answered correct, so the slowest player drink
 		if (quiz.wrongAnswerCount === 0) {
 			console.log("everyone answered correctly, slowest player drink");
-			gameHelper.emitSipsTo(quizRanking[quizRanking.length - 1].player.socketId);
+			gameController.emitSipsTo(quizRanking[quizRanking.length - 1].player.socketId);
 			quizRanking[quizRanking.length - 1].sips = quizRanking[quizRanking.length - 1].player.multiplier * 1;
 		}
 		// everyone with wrong answer drink
 		quizRanking.forEach((rank) => {
 			if (!rank.answer.isCorrect) {
 				rank.sips = rank.player.multiplier * 1;
-				gameHelper.emitSipsTo(rank.player.socketId);
+				gameController.emitSipsTo(rank.player.socketId);
 			}
 		});
 
@@ -46,12 +46,12 @@ module.exports = function challengeController(io, socket, gameHelper, session) {
 
 
 		io.in(socket.room).emit("quizResults", { quiz: quiz, ranking: quizRanking });
-		gameHelper.updateAndEmitGame(socket.room);
+		gameController.updateAndEmitGame(socket.room);
 	};
 
 	socket.on("quizAnswer", (data) => {
 		if (!socket.user || !socket.room) return;
-		const quiz = gameHelper.getCurrentCard();
+		const quiz = gameController.getCurrentCard();
 
 		const isCorrectAnswer = data.answer.isCorrect;
 
@@ -77,7 +77,7 @@ module.exports = function challengeController(io, socket, gameHelper, session) {
 		});
 
 
-		session.waitForUsers()
+		gameController.waitForUsers()
 			.then((users) => {
 				quiz.playerLeftCount = users.length;
 				if (users.length === 0) {
@@ -85,7 +85,7 @@ module.exports = function challengeController(io, socket, gameHelper, session) {
 					closeAndEmitQuiz();
 				} else {
 					console.log(`Wait for users to answer: ${JSON.stringify(users.length)}`);
-					gameHelper.updateAndEmitGame(socket.room);
+					gameController.updateAndEmitGame(socket.room);
 				}
 			});
 	});

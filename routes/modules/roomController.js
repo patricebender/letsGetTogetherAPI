@@ -1,5 +1,5 @@
-module.exports = function (io, socket, gameHelper, gameMap) {
-	const isEmpty = function(obj) {
+module.exports = function (io, socket, gameController, gameMap) {
+	const isEmpty = function (obj) {
 		return Object.keys(obj).length === 0 && obj.constructor === Object;
 	}
 
@@ -17,19 +17,19 @@ module.exports = function (io, socket, gameHelper, gameMap) {
 				// set socket basic data
 				socket.room = data.room;
 				console.log(`${socket.user.name} joined: ${socket.room}`);
-
+				const currentCard = gameController.getCurrentCard();
 
 				// if a card is currently active, increase playerLeftCount because new player also want to play!
-				if (!isEmpty(gameMap.get(socket.room).currentCard)) {
-					++gameHelper.getGameSession().currentCard.playerLeftCount;
+				if (!isEmpty(currentCard)) {
+					++currentCard.playerLeftCount;
 				}
 
 				socket.to(socket.room).emit("users-changed", {user: socket.user, event: "joined"});
-				socket.emit("roomJoinSucceed", {room: socket.room, game: gameMap.get(socket.room)});
+				socket.emit("roomJoinSucceed", {room: socket.room, game: gameController.getGameSession()});
 
 				// ++gameLogs.totalPlayers;
 
-				gameHelper.updateAndEmitGame(socket.room);
+				gameController.updateAndEmitGame(socket.room);
 			});
 		} else {
 			console.log(`${data.room} does not exist`);
@@ -56,7 +56,7 @@ module.exports = function (io, socket, gameHelper, gameMap) {
 					themes: data.themes,
 					cardsPerGame: data.cardsPerGame,
 					cardsPlayed: 0,
-					cards: gameHelper.getCardsForEnabledCategories(data.categories),
+					cards: gameController.getCardsForEnabledCategories(data.categories),
 					currentCard: {},
 					currentCategory: "none",
 					multiplier: 1,
@@ -67,7 +67,7 @@ module.exports = function (io, socket, gameHelper, gameMap) {
 				gameMap.set(data.room, oGame);
 
 
-				gameHelper.updateAndEmitGame(socket.room);
+				gameController.updateAndEmitGame(socket.room);
 				socket.emit("roomCreated", {room: socket.room, game: oGame});
 
 				// keep track of played games
@@ -92,7 +92,7 @@ module.exports = function (io, socket, gameHelper, gameMap) {
 			} else {
 				if (socket.user.isAdmin) {
 					console.log("admin left");
-					gameHelper.setNewRandomAdmin();
+					gameController.setNewRandomAdmin();
 					socket.user.isAdmin = false;
 					socket.emit("updateUser", {user: socket.user});
 				}
@@ -100,14 +100,12 @@ module.exports = function (io, socket, gameHelper, gameMap) {
 				console.log(`emit user change: ${socket.room}`);
 				io.to(socket.room).emit("users-changed", {user: socket.user, event: "left"});
 
-
 				const room = socket.room;
 				socket.room = "";
-				gameHelper.updateAndEmitGame(room);
+				gameController.updateAndEmitGame(room);
 			}
 		});
 	});
-
 
 
 	return {

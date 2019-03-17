@@ -1,15 +1,15 @@
-module.exports = function (io, socket, gameHelper) {
+module.exports = function (io, socket, gameController) {
 
 
 	const emitMultiplierCurse = function () {
 		io.in(socket.room).clients((error, clients) => {
 			if (error) throw error;
 
-			const randomPlayer = gameHelper.getRandomPlayers(1, clients)[0];
+			const randomPlayer = gameController.getRandomPlayers(1, clients)[0];
 			const multiplier = Math.floor(Math.random() * 3) + 1;
 			const curseTime = Math.floor(Math.random() * 10) + 1;
 
-			const game = gameHelper.getGameSession();
+			const game = gameController.getGameSession();
 
 
 			const multiplierCurse = {
@@ -30,7 +30,7 @@ module.exports = function (io, socket, gameHelper) {
 
 			io.to(randomPlayer.socketId).emit("updateUser", { user: randomPlayer });
 
-			gameHelper.updateAndEmitGame(socket.room);
+			gameController.updateAndEmitGame(socket.room);
 		});
 	};
 

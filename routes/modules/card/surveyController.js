@@ -1,7 +1,7 @@
-module.exports = function challengeController(io, socket, gameHelper, session) {
+module.exports = function challengeController(io, socket, gameController) {
 
 	const closeAndEmitSurvey = function () {
-		const survey = gameHelper.getCurrentCard();
+		const survey = gameController.getCurrentCard();
 		survey.closed = true;
 		console.log(`Everyone has answered. Emitting Results for Survey: ${JSON.stringify(survey.question)}`);
 
@@ -20,18 +20,18 @@ module.exports = function challengeController(io, socket, gameHelper, session) {
 		console.log(`LOSERS ARE: ${JSON.stringify(losers)}`);
 
 		losers.forEach((loser) => {
-			gameHelper.emitSipsTo(loser.socketId);
+			gameController.emitSipsTo(loser.socketId);
 		});
 
 		// noinspection JSUnresolvedFunction
 		io.in(socket.room).emit("surveyResults", { survey: survey, losers: losers });
-		gameHelper.updateAndEmitGame(socket.room);
+		gameController.updateAndEmitGame(socket.room);
 	};
 
 	socket.on("surveyAnswer", (data) => {
 		if (!socket.user || !socket.room) return;
 
-		const survey = gameHelper.getCurrentCard();
+		const survey = gameController.getCurrentCard();
 
 		const userAnswer = data.answer;
 
@@ -49,7 +49,7 @@ module.exports = function challengeController(io, socket, gameHelper, session) {
 			}
 		});
 
-		session.waitForUsers()
+		gameController.waitForUsers()
 			.then((users) => {
 				survey.playerLeftCount = users.length;
 				if (users.length === 0) {
@@ -58,7 +58,7 @@ module.exports = function challengeController(io, socket, gameHelper, session) {
 				} else {
 					console.log(`Wait for users to answer: ${JSON.stringify(users.length)}`);
 
-					gameHelper.updateAndEmitGame(socket.room);
+					gameController.updateAndEmitGame(socket.room);
 				}
 			})
 			.catch((error) => {

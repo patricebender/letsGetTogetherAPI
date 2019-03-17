@@ -19,11 +19,10 @@ console.log(`Number of Cards: ${cardCount}`);
 
 io.on("connection", (socket) => {
 	const helper = require("./modules/helper")();
-	const gameHelper = require("./modules/gameHelper")(io, cards, socket, gameMap);
-	const curseController = require("./modules/card/curseController")(io, socket, gameHelper);
-	const room = require("./modules/room")(io, socket, gameHelper, gameMap);
-	const session = require("./modules/session")(io, socket);
-	const cardHelper = require("./modules/cardHelper")(io, socket, gameHelper, session, curseController)
+	const gameController = require("./modules/gameController")(io, cards, socket, gameMap);
+	const curseController = require("./modules/card/curseController")(io, socket, gameController);
+	const room = require("./modules/roomController")(io, socket, gameController, gameMap);
+	const cardController = require("./modules/card/cardsController")(io, socket, gameController, curseController)
 
 	socket.on("disconnect", function () {
 		if (!socket.user || !socket.room) return;
@@ -39,11 +38,11 @@ io.on("connection", (socket) => {
 				// if challenged player leaves the game, end challenge.
 				if (gameSession.currentCard.category === "challenge" && gameSession.currentCard.player.socketId === socket.user.socketId) {
 					gameSession.currentCard.playerQuit = true;
-					cardHelper.closeAndEmitCurrentCard();
+					cardController.closeAndEmitCurrentCard();
 				}
 				if (playerLeftCount === 0) {
 					console.log("closing current card because everyone has answered..");
-					cardHelper.closeAndEmitCurrentCard();
+					cardController.closeAndEmitCurrentCard();
 				}
 			}
 		}
@@ -57,12 +56,12 @@ io.on("connection", (socket) => {
 			if (socket.user === gameMap.get(socket.room).admin) {
 				console.log("admin left");
 				if (gameMap.get(socket.room).players.length > 0) {
-					gameHelper.setNewRandomAdmin();
+					gameController.setNewRandomAdmin();
 				}
 			}
 			if (socket.room) {
 				io.to(socket.room).emit("users-changed", {user: socket.user, event: "left"});
-				gameHelper.updateAndEmitGame(socket.room);
+				gameController.updateAndEmitGame(socket.room);
 			}
 		}
 	});
@@ -75,51 +74,37 @@ io.on("connection", (socket) => {
 		if (!socket.user || !socket.room) return;
 		const game = gameMap.get(socket.room);
 
-		const unplayedCardsInGame = gameHelper.cardsLeftInGame(game);
+		const unplayedCardsInGame = gameController.cardsLeftInGame(game);
 
 		// set cardsPerGame to cards left and keep card array
 		if (unplayedCardsInGame < game.cardsPerGame) {
 			console.log("\n less unique cards than they want to play, resetting cards array");
-			game.cards = gameHelper.getCardsForEnabledCategories(game.categories);
+			game.cards = gameController.getCardsForEnabledCategories(game.categories);
 		} else {
 			console.log("\n enough unique cards for new round!");
 		}
 
 		game.isOver = false;
 		game.cardsPlayed = 0;
-		cardHelper.emitRandomCard();
-		gameHelper.updateAndEmitGame(socket.room);
+		cardController.emitRandomCard();
+		gameController.updateAndEmitGame(socket.room);
 	});
 
 	socket.on("newCardRequest", function () {
 		if (!socket.user || !socket.room) return;
-		const game = gameMap.get(socket.room);
-
-		// All cards played, emit game over event
-		if (game.cardsPlayed === game.cardsPerGame) {
-			gameHelper.emitGameOver("Alle Karten Gespielt.");
-			return;
-		}
-
-		game.cardsPlayed++;
-
-		// reset user answers
-		game.players.forEach((player) => {
-			player.hasAnswered = false;
-		});
 
 		console.log(`${JSON.stringify(socket.user.name)} requests new Card`);
 
-		cardHelper.emitRandomCard();
-
-		gameHelper.updateAndEmitGame(socket.room);
+		gameController.nextRound();
+		cardController.emitRandomCard();
+		gameController.updateAndEmitGame(socket.room);
 	});
 
 
 	socket.on("requestUserList", () => {
 		if (!socket.user) return;
 		console.log(`${socket.user.name} requests user list`);
-		gameHelper.updateAndEmitGame(socket.room, "Only emit to requester");
+		gameController.updateAndEmitGame(socket.room, "Only emit to requester");
 	});
 
 	socket.on("requestAvatarList", () => {
@@ -169,7 +154,7 @@ io.on("connection", (socket) => {
 		socket.user.name = data.newName;
 		// if socket is in room inform others about changes
 		if (socket.room) {
-			gameHelper.updateAndEmitGame(socket.room);
+			gameController.updateAndEmitGame(socket.room);
 		}
 	});
 	socket.on("avatarChanged", (data) => {
@@ -179,7 +164,7 @@ io.on("connection", (socket) => {
 		console.log(JSON.stringify(socket.user));
 		// if socket is in room inform others about changes
 		if (socket.room) {
-			gameHelper.updateAndEmitGame(socket.room);
+			gameController.updateAndEmitGame(socket.room);
 		}
 	});
 
@@ -188,18 +173,16 @@ io.on("connection", (socket) => {
 		console.log(`Categories in ${socket.room} changed to: ${JSON.stringify(data.categories)}`);
 		const game = gameMap.get(socket.room);
 		game.categories = data.categories;
-		game.cards = gameHelper.getCardsForEnabledCategories(game.categories);
-		gameHelper.updateAndEmitGame(socket.room);
+		game.cards = gameController.getCardsForEnabledCategories(game.categories);
+		gameController.updateAndEmitGame(socket.room);
 	});
 
 	socket.on("themesChanged", (data) => {
 		if (!socket.user || !socket.room) return;
 		console.log(`Themes in ${socket.room} changed to: ${JSON.stringify(data.themes)}`);
 		gameMap.get(socket.room).themes = data.themes;
-		gameHelper.updateAndEmitGame(socket.room);
+		gameController.updateAndEmitGame(socket.room);
 	});
-
-
 });
 
 

@@ -9,8 +9,38 @@ module.exports = function (io, cards, socket, gameMap) {
 	};
 
 	return {
+		nextRound: function() {
+			const game = this.getGameSession();
+
+			// All cards played, emit game over event
+			if (game.cardsPlayed === game.cardsPerGame) {
+				this.emitGameOver("Alle Karten Gespielt.");
+				return;
+			}
+
+			game.cardsPlayed++;
+
+			// reset user answers
+			game.players.forEach((player) => {
+				player.hasAnswered = false;
+			});
+
+		},
+		waitForUsers: function () {
+			return new Promise((resolve) => {
+				const users = [];
+				io.in(socket.room).clients((error, clients) => {
+					clients.forEach((client) => {
+						if (!io.sockets.connected[client].user.hasAnswered) {
+							users.push(io.sockets.connected[client].user);
+						}
+					});
+				});
+				resolve(users);
+			});
+		},
 		emitSipsTo: function (socketId, sips) {
-			const gameSession = gameMap.get(socket.room);
+			const gameSession = this.getGameSession();
 			gameSession.players.forEach((player) => {
 				if (socketId === player.socketId) {
 					let sipPenalty = sips || 1;

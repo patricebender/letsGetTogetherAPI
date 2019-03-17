@@ -1,9 +1,9 @@
-module.exports = function (io, socket, gameHelper, session, curseController) {
+module.exports = function (io, socket, gameHelper, curseController) {
 
-	const guessController = require("./card/guessController")(io, socket, gameHelper, session);
-	const challengeController = require("./card/challengeController")(io, socket, gameHelper, session);
-	const quizController = require("./card/quizController")(io, socket, gameHelper, session);
-	const surveyController = require("./card/surveyController")(io, socket, gameHelper, session);
+	const guessController = require("./guessController")(io, socket, gameHelper);
+	const challengeController = require("./challengeController")(io, socket, gameHelper);
+	const quizController = require("./quizController")(io, socket, gameHelper);
+	const surveyController = require("./surveyController")(io, socket, gameHelper);
 
 	const emitRandomCard = function () {
 		if (!socket.user || !socket.room) return;
@@ -56,7 +56,7 @@ module.exports = function (io, socket, gameHelper, session, curseController) {
 		const currentCategory = gameHelper.getCurrentCard().category;
 		switch (currentCategory) {
 		case "guess":
-			guessController.closeAndEmitGuess();
+			guessController.closeAndEmit();
 			break;
 		case "quiz":
 			quizController.closeAndEmit();
@@ -74,6 +74,6 @@ module.exports = function (io, socket, gameHelper, session, curseController) {
 
 	return {
 		closeAndEmitCurrentCard: closeAndEmitCurrentCard,
-		emitRandomCard,
+		emitRandomCard: emitRandomCard,
 	};
 };

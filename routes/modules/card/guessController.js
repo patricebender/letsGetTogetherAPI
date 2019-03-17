@@ -1,4 +1,4 @@
-module.exports = function (io, socket, gameHelper, session) {
+module.exports = function (io, socket, gameController) {
 	const helper = require("../helper")();
 
 	const compareGuessAnswer = function (rankingA, rankingB) {
@@ -19,16 +19,16 @@ module.exports = function (io, socket, gameHelper, session) {
 			// both drink
 			if (ranking[i].rankNumber === ranking[i - 1].rankNumber) {
 				ranking[i].sips = ranking[i].player.multiplier * 1;
-				gameHelper.emitSipsTo(ranking[i].player.socketId);
+				gameController.emitSipsTo(ranking[i].player.socketId);
 				// if the two got the first rank and there still need to be sipped, sip.
 				if (i === 1) {
 					console.log(`also emit to first one: ${JSON.stringify(ranking[i - 1].player)}`);
 					ranking[i - 1].sips = ranking[i - 1].player.multiplier * 1;
-					gameHelper.emitSipsTo(ranking[i - 1].player.socketId);
+					gameController.emitSipsTo(ranking[i - 1].player.socketId);
 				}
 			} else {
 				ranking[i].sips = ranking[i].player.multiplier * 1;
-				gameHelper.emitSipsTo(ranking[i].player.socketId);
+				gameController.emitSipsTo(ranking[i].player.socketId);
 				howManyDrink--;
 			}
 			i--;
@@ -36,7 +36,7 @@ module.exports = function (io, socket, gameHelper, session) {
 	};
 
 	const closeAndEmitGuess = function () {
-		const guess = gameHelper.getCurrentCard();
+		const guess = gameController.getCurrentCard();
 		guess.closed = true;
 		console.log(`Everyone has answered. Sort Ranking and emit results for Guess: ${JSON.stringify(guess.question)}`);
 		guess.ranking.sort(compareGuessAnswer);
@@ -65,13 +65,13 @@ module.exports = function (io, socket, gameHelper, session) {
 
 		// noinspection JSUnresolvedFunction
 		io.in(socket.room).emit("guessResults", {guess: guess, ranking: guess.ranking});
-		gameHelper.updateAndEmitGame(socket.room);
+		gameController.updateAndEmitGame(socket.room);
 	};
 
 	socket.on("guessAnswer", (data) => {
 		if (!socket.user || !socket.room) return;
 
-		const guess = gameHelper.getCurrentCard();
+		const guess = gameController.getCurrentCard();
 
 		const userAnswer = data.answer;
 
@@ -86,21 +86,21 @@ module.exports = function (io, socket, gameHelper, session) {
 			answer: userAnswer, player: socket.user, difference: diff, rankNumber: 0, sips: 0,
 		});
 
-		session.waitForUsers().then((users) => {
+		gameController.waitForUsers().then((users) => {
 			// to provide info about remaining players
-			gameHelper.getCurrentCard().playerLeftCount = users.length;
+			gameController.getCurrentCard().playerLeftCount = users.length;
 
 			if (users.length === 0) {
 				// close guess
 				closeAndEmitGuess();
 			} else {
 				console.log(`Wait for users to answer: ${users.length}`);
-				gameHelper.updateAndEmitGame(socket.room);
+				gameController.updateAndEmitGame(socket.room);
 			}
 		});
 	});
 
 	return {
-		closeAndEmitGuess: closeAndEmitGuess,
+		closeAndEmit: closeAndEmitGuess,
 	};
 };
