@@ -67,44 +67,6 @@ io.on("connection", (socket) => {
 		}
 	});
 
-	socket.on("quizAnswer", (data) => {
-		if (!socket.user || !socket.room) return;
-		const quiz = gameMap.get(socket.room).currentCard;
-		const isCorrectAnswer = data.answer.isCorrect;
-
-		console.log(`${socket.user.name} answered ${quiz.question}${isCorrectAnswer ? " correct " : " wrong "}with answer: ${data.answer.text}\n`
-			+ `time: ${data.time}`);
-
-
-		socket.user.hasAnswered = true;
-
-
-		quiz.answerCount++;
-
-		!isCorrectAnswer ? quiz.wrongAnswerCount++ : "";
-
-		// add user answer to currentCard in game
-		quiz.ranking.push({
-			time: data.time,
-			player: socket.user,
-			sips: 0,
-			answer: data.answer,
-		});
-
-
-		session.waitForUsers()
-			.then((users) => {
-				gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
-				if (users.length === 0) {
-					// close quiz
-					cardHelper.closeAndEmitCurrentCard();
-				} else {
-					console.log(`Wait for users to answer: ${JSON.stringify(users.length)}`);
-					gameHelper.updateAndEmitGame(socket.room);
-				}
-			});
-	});
-
 	socket.on("startGame", function () {
 		io.in(socket.room).emit("gameStarted");
 	});
