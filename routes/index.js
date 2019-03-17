@@ -104,10 +104,6 @@ io.on("connection", (socket) => {
 				}
 			});
 	});
-	socket.on("challengedPlayerLeaves", () => {
-		console.log("challengedPlayerLeaves");
-	});
-
 
 	socket.on("startGame", function () {
 		io.in(socket.room).emit("gameStarted");
@@ -193,55 +189,7 @@ io.on("connection", (socket) => {
 
 		gameHelper.updateAndEmitGame(socket.room);
 	});
-	socket.on("challengeAccepted", () => {
-		if (!socket.user || !socket.room) return;
 
-		const challenge = gameMap.get(socket.room).currentCard;
-		console.log(`${socket.user.name}accepted the challenge. `);
-
-		challenge.isAccepted = true;
-		gameHelper.updateAndEmitGame(socket.room);
-	});
-	socket.on("challengeDeclined", () => {
-		if (!socket.user || !socket.room) return;
-
-
-		const challenge = gameMap.get(socket.room).currentCard;
-
-		console.log(`${socket.user.name}declined the challenge. `);
-		gameHelper.emitSipsTo(socket.user.socketId, challenge.sips);
-
-		challenge.isDeclined = true;
-		challenge.closed = true;
-		gameHelper.updateAndEmitGame(socket.room);
-	});
-
-	socket.on("challengeVote", (data) => {
-		if (!socket.user || !socket.room) return;
-		socket.user.hasAnswered = true;
-		const challenge = gameMap.get(socket.room).currentCard;
-
-		const upVote = !!data.success;
-		console.log(socket.user.name, upVote ? "up" : "down", "votes challenge");
-		upVote ? challenge.upVotes++ : challenge.downVotes++;
-
-		session.waitForUsers()
-			.then((users) => {
-				// -1 => dont wait for challenged player
-				gameMap.get(socket.room).currentCard.playerLeftCount = users.length - 1;
-				if (gameMap.get(socket.room).currentCard.playerLeftCount === 0) {
-					// close survey
-					cardHelper.closeAndEmitCurrentCard();
-				} else {
-					console.log(`Wait for users to answer: ${JSON.stringify(users.length)}`);
-
-					gameHelper.updateAndEmitGame(socket.room);
-				}
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	});
 
 	socket.on("requestUserList", () => {
 		if (!socket.user) return;
@@ -325,6 +273,8 @@ io.on("connection", (socket) => {
 		gameMap.get(socket.room).themes = data.themes;
 		gameHelper.updateAndEmitGame(socket.room);
 	});
+
+
 });
 
 

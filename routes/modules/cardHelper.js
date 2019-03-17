@@ -1,7 +1,7 @@
 module.exports = function (io, socket, gameHelper, session, curseController) {
 
-	const guess = require("./card/guessController")(io, socket, gameHelper, session);
-
+	const guessController = require("./card/guessController")(io, socket, gameHelper, session);
+	const challengeController = require("./card/challengeController")(io, socket, gameHelper, session);
 
 	const compareQuizAnswer = function (rankingA, rankingB) {
 		// compare quiz answers. if both are correct / incorrect the time decides who won
@@ -68,7 +68,7 @@ module.exports = function (io, socket, gameHelper, session, curseController) {
 
 
 	const closeAndEmitSurvey = function () {
-		const survey = gameMap.get(socket.room).currentCard;
+		const survey = gameHelper.getCurrentCard();
 		survey.closed = true;
 		console.log(`Everyone has answered. Emitting Results for Survey: ${JSON.stringify(survey.question)}`);
 
@@ -87,7 +87,7 @@ module.exports = function (io, socket, gameHelper, session, curseController) {
 		console.log(`LOSERS ARE: ${JSON.stringify(losers)}`);
 
 		losers.forEach((loser) => {
-			emitSipsTo(loser.socketId);
+			gameHelper.emitSipsTo(loser.socketId);
 		});
 
 		// noinspection JSUnresolvedFunction
@@ -95,26 +95,8 @@ module.exports = function (io, socket, gameHelper, session, curseController) {
 		gameHelper.updateAndEmitGame(socket.room);
 	};
 
-	const closeAndEmitChallenge = function () {
-		const challenge = gameHelper.getGameSession().currentCard;
-		challenge.closed = true;
-		console.log(`Everyone has answered. Emitting Results for Challenge: ${JSON.stringify(challenge.title)}`);
-
-
-		const upVotes = challenge;
-		const downVotes = challenge;
-		console.log(`upVotes x ${upVotes} \n`
-			+ `downVotes x ${downVotes}`);
-
-		downVotes >= upVotes ? challenge.failed = true : challenge.failed = false;
-		challenge.failed ? gameHelper.emitSipsTo(challenge.player.socketId, 5) : "";
-
-		gameHelper.updateAndEmitGame(socket.room);
-	};
-
-
 	const closeAndEmitQuiz = function () {
-		const quiz = gameMap.get(socket.room).currentCard;
+		const quiz = gameHelper.getCurrentCard();
 
 		console.log("Everyone has answered.");
 		quiz.closed = true;
@@ -147,10 +129,10 @@ module.exports = function (io, socket, gameHelper, session, curseController) {
 	};
 
 	const closeAndEmitCurrentCard = function () {
-		const currentCategory = gameMap.get(socket.room).currentCard.category;
+		const currentCategory = gameHelper.getCurrentCard().category;
 		switch (currentCategory) {
 		case "guess":
-			guess.closeAndEmitGuess();
+			guessController.closeAndEmitGuess();
 			break;
 		case "quiz":
 			closeAndEmitQuiz();
@@ -159,7 +141,7 @@ module.exports = function (io, socket, gameHelper, session, curseController) {
 			closeAndEmitSurvey();
 			break;
 		case "challenge":
-			closeAndEmitChallenge();
+			challengeController.closeAndEmit();
 			break;
 		default:
 			console.log(`${JSON.stringify(currentCategory)} is not known :O`);
