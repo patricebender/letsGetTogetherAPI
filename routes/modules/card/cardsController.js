@@ -1,16 +1,16 @@
-module.exports = function (io, socket, gameHelper, curseController) {
+module.exports = function (io, socket, gameController, curseController) {
 
-	const guessController = require("./guessController")(io, socket, gameHelper);
-	const challengeController = require("./challengeController")(io, socket, gameHelper);
-	const quizController = require("./quizController")(io, socket, gameHelper);
-	const surveyController = require("./surveyController")(io, socket, gameHelper);
+	const guessController = require("./guessController")(io, socket, gameController);
+	const challengeController = require("./challengeController")(io, socket, gameController);
+	const quizController = require("./quizController")(io, socket, gameController);
+	const surveyController = require("./surveyController")(io, socket, gameController);
 
 	const emitRandomCard = function () {
 		if (!socket.user || !socket.room) return;
-		const game = gameHelper.getGameSession();
+		const game = gameController.getGameSession();
 
-		if (gameHelper.cardsLeftInGame() > 0) {
-			gameHelper.reduceCurseTime();
+		if (gameController.cardsLeftInGame() > 0) {
+			gameController.reduceCurseTime();
 
 			// random value to determine wheter to cast a curse or not
 			const random = Math.floor(Math.random() * 100);
@@ -20,21 +20,21 @@ module.exports = function (io, socket, gameHelper, curseController) {
 				curseController.emitRandomCurse();
 			} else {
 				// category object with cards array
-				const randomCategory = gameHelper.getRandomCategoryForGame(game);
+				const randomCategory = gameController.getRandomCategoryForGame(game);
 
 
 				if (!randomCategory) {
-					gameHelper.emitGameOver("Keine Karten mehr ☹️");
+					gameController.emitGameOver("Keine Karten mehr ☹️");
 				} else {
 					// remove and retrieve card from array
-					const randomCard = gameHelper.getRandomCardForCategory(randomCategory);
+					const randomCard = gameController.getRandomCardForCategory(randomCategory);
 					game.currentCard = randomCard;
 					game.currentCategory = randomCard.category;
 
 					if (game.currentCategory === "challenge") {
 						io.in(socket.room).clients((error, clients) => {
 							if (error) throw error;
-							gameHelper.getCurrentCard().player = gameHelper.getRandomPlayers(1, clients)[0];
+							gameController.getCurrentCard().player = gameController.getRandomPlayers(1, clients)[0];
 						});
 					}
 
@@ -47,13 +47,13 @@ module.exports = function (io, socket, gameHelper, curseController) {
 			// ++gameLogs.totalCards;
 		} else {
 			console.log(`\n no cards left..${JSON.stringify(game.cards)}`);
-			gameHelper.emitGameOver("Keine Karten mehr Übrig ☹️");
+			gameController.emitGameOver("Keine Karten mehr Übrig ☹️");
 		}
 	};
 
 
 	const closeAndEmitCurrentCard = function () {
-		const currentCategory = gameHelper.getCurrentCard().category;
+		const currentCategory = gameController.getCurrentCard().category;
 		switch (currentCategory) {
 		case "guess":
 			guessController.closeAndEmit();
