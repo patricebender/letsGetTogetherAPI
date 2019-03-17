@@ -1,0 +1,237 @@
+module.exports = function (io, socket, gameHelper, gameMap, curseManager) {
+
+	const calcSips = function (ranking, howManyDrink) {
+		let i = ranking.length - 1;
+
+		while (howManyDrink > 0 && i > 0) {
+			// both drink
+			if (ranking[i].rankNumber === ranking[i - 1].rankNumber) {
+				ranking[i].sips = ranking[i].player.multiplier * 1;
+				gameHelper.emitSipsTo(ranking[i].player.socketId);
+				// if the two got the first rank and there still need to be sipped, sip.
+				if (i === 1) {
+					console.log(`also emit to first one: ${JSON.stringify(ranking[i - 1].player)}`);
+					ranking[i - 1].sips = ranking[i - 1].player.multiplier * 1;
+					gameHelper.emitSipsTo(ranking[i - 1].player.socketId);
+				}
+			} else {
+				ranking[i].sips = ranking[i].player.multiplier * 1;
+				gameHelper.emitSipsTo(ranking[i].player.socketId);
+				howManyDrink--;
+			}
+			i--;
+		}
+	};
+
+	const compareGuessAnswer = function (rankingA, rankingB) {
+		// compare absolute difference to correct answer for sorting
+		const diffAbsA = rankingA.difference;
+		const diffAbsB = rankingB.difference;
+
+		if (diffAbsA < diffAbsB) return -1;
+		if (diffAbsB < diffAbsA) return 1;
+
+		return 0;
+	};
+
+	const compareQuizAnswer = function (rankingA, rankingB) {
+		// compare quiz answers. if both are correct / incorrect the time decides who won
+		const isCorrectA = rankingA.answer.isCorrect;
+		const isCorrectB = rankingB.answer.isCorrect;
+
+		const timeA = rankingA.time;
+		const timeB = rankingB.time;
+
+		if ((isCorrectA && isCorrectB) || (!isCorrectA && !isCorrectB)) {
+			if (timeA < timeB) return -1;
+			if (timeB < timeA) return 1;
+		} else if (isCorrectA) return -1;
+		else return 1;
+
+		return 0;
+	};
+
+	const emitRandomCard = function () {
+		if (!socket.user || !socket.room) return;
+		const game = gameHelper.getGameSession();
+
+		if (gameHelper.cardsLeftInGame() > 0) {
+			gameHelper.reduceCurseTime();
+
+			// random value to determine wheter to cast a curse or not
+			const random = Math.floor(Math.random() * 100);
+
+			if (random > 90 && game.curseEnabled) {
+				console.log("CURSE CARD, random: ", random);
+				curseManager.emitRandomCurse();
+			} else {
+				// category object with cards array
+				const randomCategory = gameHelper.getRandomCategoryForGame(game);
+
+
+				if (!randomCategory) {
+					gameHelper.emitGameOver("Keine Karten mehr ☹️");
+				} else {
+					// remove and retrieve card from array
+					const randomCard = gameHelper.getRandomCardForCategory(randomCategory);
+					game.currentCard = randomCard;
+					game.currentCategory = randomCard.category;
+
+					if (game.currentCategory === "challenge") {
+						io.in(socket.room).clients((error, clients) => {
+							if (error) throw error;
+							game.currentCard.player = gameHelper.getRandomPlayers(1, clients)[0];
+						});
+					}
+
+
+					console.log(`emitting ${JSON.stringify(randomCard.category)}`);
+					io.in(socket.room).emit("newCard", { card: game.currentCard });
+				}
+			}
+
+			// ++gameLogs.totalCards;
+		} else {
+			console.log(`\n no cards left..${JSON.stringify(game.cards)}`);
+			gameHelper.emitGameOver("Keine Karten mehr Übrig ☹️");
+		}
+	};
+
+
+	const closeAndEmitGuess = function () {
+		const guess = gameMap.get(socket.room).currentCard;
+		guess.closed = true;
+		console.log(`Everyone has answered. Sort Ranking and emit results for Guess: ${JSON.stringify(guess.question)}`);
+		guess.ranking.sort(compareGuessAnswer);
+
+		// big groups should drink more e.g. for 10 player I want the last two to drink.
+		const howManyDrink = guess.answerCount / 5 < 1 ? 1 : Math.floor(guess.answerCount / 5);
+		console.log(`${howManyDrink} drink!`);
+
+
+		// find last n players with baddest guess
+		let rank = 1;
+		guess.ranking.forEach((answer, index) => {
+			// last index reached
+			if (!guess.ranking[index + 1]) {
+				answer.rankNumber = rank;
+			} else if (answer.difference === guess.ranking[index + 1].difference) {
+				answer.rankNumber = rank;
+			} else {
+				answer.rankNumber = rank;
+				rank++;
+			}
+		});
+
+		// calculate sips
+		calcSips(guess.ranking, howManyDrink);
+
+		// noinspection JSUnresolvedFunction
+		io.in(socket.room).emit("guessResults", {guess: guess, ranking: guess.ranking});
+		gameHelper.updateAndEmitGame(socket.room);
+	};
+
+	const closeAndEmitSurvey = function () {
+		const survey = gameMap.get(socket.room).currentCard;
+		survey.closed = true;
+		console.log(`Everyone has answered. Emitting Results for Survey: ${JSON.stringify(survey.question)}`);
+
+
+		const firstOption = survey.options[0];
+		const secondOption = survey.options[1];
+
+		console.log(`${firstOption.title} x${firstOption.voters.length}`, `${secondOption.title} x${secondOption.voters.length}`);
+
+		const losers = firstOption.voters.length > secondOption.voters.length
+			? survey.options[1].voters
+			: secondOption.voters.length > firstOption.voters.length
+				? survey.options[0].voters : [];
+
+
+		console.log(`LOSERS ARE: ${JSON.stringify(losers)}`);
+
+		losers.forEach((loser) => {
+			emitSipsTo(loser.socketId);
+		});
+
+		// noinspection JSUnresolvedFunction
+		io.in(socket.room).emit("surveyResults", {survey: survey, losers: losers});
+		gameHelper.updateAndEmitGame(socket.room);
+	};
+
+	const closeAndEmitChallenge = function () {
+		const challenge = gameHelper.getGameSession().currentCard;
+		challenge.closed = true;
+		console.log(`Everyone has answered. Emitting Results for Challenge: ${JSON.stringify(challenge.title)}`);
+
+
+		const upVotes = challenge;
+		const downVotes = challenge;
+		console.log(`upVotes x ${upVotes} \n`
+			+ `downVotes x ${downVotes}`);
+
+		downVotes >= upVotes ? challenge.failed = true : challenge.failed = false;
+		challenge.failed ? gameHelper.emitSipsTo(challenge.player.socketId, 5) : "";
+
+		gameHelper.updateAndEmitGame(socket.room);
+	};
+
+
+	const closeAndEmitQuiz = function () {
+		const quiz = gameMap.get(socket.room).currentCard;
+
+		console.log("Everyone has answered.");
+		quiz.closed = true;
+
+		const quizRanking = quiz.ranking;
+
+		quizRanking.sort(compareQuizAnswer);
+
+
+		// everyone answered correct, so the slowest player drink
+		if (quiz.wrongAnswerCount === 0) {
+			console.log("everyone answered correctly, slowest player drink");
+			gameHelper.emitSipsTo(quizRanking[quizRanking.length - 1].player.socketId);
+			quizRanking[quizRanking.length - 1].sips = quizRanking[quizRanking.length - 1].player.multiplier * 1;
+		}
+		// everyone with wrong answer drink
+		quizRanking.forEach((rank) => {
+			if (!rank.answer.isCorrect) {
+				rank.sips = rank.player.multiplier * 1;
+				gameHelper.emitSipsTo(rank.player.socketId);
+			}
+		});
+
+
+		console.log(JSON.stringify(quizRanking));
+
+
+		io.in(socket.room).emit("quizResults", {quiz: quiz, ranking: quizRanking});
+		gameHelper.updateAndEmitGame(socket.room);
+	};
+
+	const closeAndEmitCurrentCard = function () {
+		const currentCategory = gameMap.get(socket.room).currentCard.category;
+		switch (currentCategory) {
+			case "guess":
+				closeAndEmitGuess();
+				break;
+			case "quiz":
+				closeAndEmitQuiz();
+				break;
+			case "survey":
+				closeAndEmitSurvey();
+				break;
+			case "challenge":
+				closeAndEmitChallenge();
+				break;
+			default:
+				console.log(`${JSON.stringify(currentCategory)} is not known :O`);
+		}
+	};
+
+	return {
+		closeAndEmitCurrentCard: closeAndEmitCurrentCard,
+		emitRandomCard,
+	};
+};
