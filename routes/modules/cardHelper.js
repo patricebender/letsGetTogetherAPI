@@ -1,38 +1,7 @@
-module.exports = function (io, socket, gameHelper, gameMap, curseManager) {
+module.exports = function (io, socket, gameHelper, session, curseController) {
 
-	const calcSips = function (ranking, howManyDrink) {
-		let i = ranking.length - 1;
+	const guess = require("./card/guessController")(io, socket, gameHelper, session);
 
-		while (howManyDrink > 0 && i > 0) {
-			// both drink
-			if (ranking[i].rankNumber === ranking[i - 1].rankNumber) {
-				ranking[i].sips = ranking[i].player.multiplier * 1;
-				gameHelper.emitSipsTo(ranking[i].player.socketId);
-				// if the two got the first rank and there still need to be sipped, sip.
-				if (i === 1) {
-					console.log(`also emit to first one: ${JSON.stringify(ranking[i - 1].player)}`);
-					ranking[i - 1].sips = ranking[i - 1].player.multiplier * 1;
-					gameHelper.emitSipsTo(ranking[i - 1].player.socketId);
-				}
-			} else {
-				ranking[i].sips = ranking[i].player.multiplier * 1;
-				gameHelper.emitSipsTo(ranking[i].player.socketId);
-				howManyDrink--;
-			}
-			i--;
-		}
-	};
-
-	const compareGuessAnswer = function (rankingA, rankingB) {
-		// compare absolute difference to correct answer for sorting
-		const diffAbsA = rankingA.difference;
-		const diffAbsB = rankingB.difference;
-
-		if (diffAbsA < diffAbsB) return -1;
-		if (diffAbsB < diffAbsA) return 1;
-
-		return 0;
-	};
 
 	const compareQuizAnswer = function (rankingA, rankingB) {
 		// compare quiz answers. if both are correct / incorrect the time decides who won
@@ -63,7 +32,7 @@ module.exports = function (io, socket, gameHelper, gameMap, curseManager) {
 
 			if (random > 90 && game.curseEnabled) {
 				console.log("CURSE CARD, random: ", random);
-				curseManager.emitRandomCurse();
+				curseController.emitRandomCurse();
 			} else {
 				// category object with cards array
 				const randomCategory = gameHelper.getRandomCategoryForGame(game);
@@ -80,7 +49,7 @@ module.exports = function (io, socket, gameHelper, gameMap, curseManager) {
 					if (game.currentCategory === "challenge") {
 						io.in(socket.room).clients((error, clients) => {
 							if (error) throw error;
-							game.currentCard.player = gameHelper.getRandomPlayers(1, clients)[0];
+							gameHelper.getCurrentCard().player = gameHelper.getRandomPlayers(1, clients)[0];
 						});
 					}
 
@@ -97,39 +66,6 @@ module.exports = function (io, socket, gameHelper, gameMap, curseManager) {
 		}
 	};
 
-
-	const closeAndEmitGuess = function () {
-		const guess = gameMap.get(socket.room).currentCard;
-		guess.closed = true;
-		console.log(`Everyone has answered. Sort Ranking and emit results for Guess: ${JSON.stringify(guess.question)}`);
-		guess.ranking.sort(compareGuessAnswer);
-
-		// big groups should drink more e.g. for 10 player I want the last two to drink.
-		const howManyDrink = guess.answerCount / 5 < 1 ? 1 : Math.floor(guess.answerCount / 5);
-		console.log(`${howManyDrink} drink!`);
-
-
-		// find last n players with baddest guess
-		let rank = 1;
-		guess.ranking.forEach((answer, index) => {
-			// last index reached
-			if (!guess.ranking[index + 1]) {
-				answer.rankNumber = rank;
-			} else if (answer.difference === guess.ranking[index + 1].difference) {
-				answer.rankNumber = rank;
-			} else {
-				answer.rankNumber = rank;
-				rank++;
-			}
-		});
-
-		// calculate sips
-		calcSips(guess.ranking, howManyDrink);
-
-		// noinspection JSUnresolvedFunction
-		io.in(socket.room).emit("guessResults", {guess: guess, ranking: guess.ranking});
-		gameHelper.updateAndEmitGame(socket.room);
-	};
 
 	const closeAndEmitSurvey = function () {
 		const survey = gameMap.get(socket.room).currentCard;
@@ -155,7 +91,7 @@ module.exports = function (io, socket, gameHelper, gameMap, curseManager) {
 		});
 
 		// noinspection JSUnresolvedFunction
-		io.in(socket.room).emit("surveyResults", {survey: survey, losers: losers});
+		io.in(socket.room).emit("surveyResults", { survey: survey, losers: losers });
 		gameHelper.updateAndEmitGame(socket.room);
 	};
 
@@ -206,27 +142,27 @@ module.exports = function (io, socket, gameHelper, gameMap, curseManager) {
 		console.log(JSON.stringify(quizRanking));
 
 
-		io.in(socket.room).emit("quizResults", {quiz: quiz, ranking: quizRanking});
+		io.in(socket.room).emit("quizResults", { quiz: quiz, ranking: quizRanking });
 		gameHelper.updateAndEmitGame(socket.room);
 	};
 
 	const closeAndEmitCurrentCard = function () {
 		const currentCategory = gameMap.get(socket.room).currentCard.category;
 		switch (currentCategory) {
-			case "guess":
-				closeAndEmitGuess();
-				break;
-			case "quiz":
-				closeAndEmitQuiz();
-				break;
-			case "survey":
-				closeAndEmitSurvey();
-				break;
-			case "challenge":
-				closeAndEmitChallenge();
-				break;
-			default:
-				console.log(`${JSON.stringify(currentCategory)} is not known :O`);
+		case "guess":
+			guess.closeAndEmitGuess();
+			break;
+		case "quiz":
+			closeAndEmitQuiz();
+			break;
+		case "survey":
+			closeAndEmitSurvey();
+			break;
+		case "challenge":
+			closeAndEmitChallenge();
+			break;
+		default:
+			console.log(`${JSON.stringify(currentCategory)} is not known :O`);
 		}
 	};
 

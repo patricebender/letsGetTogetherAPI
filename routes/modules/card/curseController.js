@@ -1,5 +1,6 @@
 module.exports = function (io, socket, gameHelper) {
 
+
 	const emitMultiplierCurse = function () {
 		io.in(socket.room).clients((error, clients) => {
 			if (error) throw error;

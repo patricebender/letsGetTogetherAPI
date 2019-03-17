@@ -32,7 +32,9 @@ module.exports = function (io, cards, socket, gameMap) {
 		getGameSession: function () {
 			return gameMap.get(socket.room);
 		},
-
+		getCurrentCard: function () {
+			return this.getGameSession().currentCard;
+		},
 		reduceCurseTime: function () {
 			this.getGameSession().players.forEach((player) => {
 				player.curses.forEach((curse, i) => {
@@ -161,5 +163,7 @@ module.exports = function (io, cards, socket, gameMap) {
 		getRandomCardForCategory: function (category) {
 			return category.splice(Math.floor(Math.random() * category.length), 1)[0];
 		},
+
+
 	};
 };

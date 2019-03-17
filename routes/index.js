@@ -20,10 +20,10 @@ console.log(`Number of Cards: ${cardCount}`);
 io.on("connection", (socket) => {
 	const helper = require("./modules/helper")();
 	const gameHelper = require("./modules/gameHelper")(io, cards, socket, gameMap);
-	const curseManager = require("./modules/card/curse")(io, socket, gameHelper);
-	const cardHelper = require("./modules/cardHelper")(io, socket, gameHelper, gameMap, curseManager)
+	const curseController = require("./modules/card/curseController")(io, socket, gameHelper);
 	const room = require("./modules/room")(io, socket, gameHelper, gameMap);
-	const session = require("./modules/session")(io, socket, room, gameMap, helper, gameHelper, cardHelper);
+	const session = require("./modules/session")(io, socket);
+	const cardHelper = require("./modules/cardHelper")(io, socket, gameHelper, session, curseController)
 
 	socket.on("disconnect", function () {
 		if (!socket.user || !socket.room) return;
@@ -65,37 +65,6 @@ io.on("connection", (socket) => {
 				gameHelper.updateAndEmitGame(socket.room);
 			}
 		}
-	});
-
-	socket.on("guessAnswer", (data) => {
-		if (!socket.user || !socket.room) return;
-		const guess = gameMap.get(socket.room).currentCard;
-
-		const userAnswer = data.answer;
-
-		socket.user.hasAnswered = true;
-		guess.answerCount++;
-
-		console.log(`${JSON.stringify(socket.user.name)} answered ${guess.question} \n with guess: ${userAnswer}`);
-
-		const diff = helper.round(Math.abs(userAnswer - guess.answer), 2);
-		// add user answer to currentCard in game
-		guess.ranking.push({
-			answer: userAnswer, player: socket.user, difference: diff, rankNumber: 0, sips: 0,
-		});
-
-		session.waitForUsers().then((users) => {
-			// to provide info about remaining players
-			gameMap.get(socket.room).currentCard.playerLeftCount = users.length;
-
-			if (users.length === 0) {
-				// close guess
-				cardHelper.closeAndEmitCurrentCard();
-			} else {
-				console.log(`Wait for users to answer: ${users.length}`);
-				gameHelper.updateAndEmitGame(socket.room);
-			}
-		});
 	});
 
 	socket.on("quizAnswer", (data) => {
