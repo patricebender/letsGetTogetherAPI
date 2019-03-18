@@ -9,10 +9,10 @@ const io = require("socket.io")(http, {
 const gameMap = new Map();
 
 const cards = {};
-cards.surveys = require("./surveys");
-cards.guess = require("./guesses");
-cards.quiz = require("./quizzes");
-cards.challenge = require("./challenges");
+cards.surveys = require("../public/cards/surveys");
+cards.guess = require("../public/cards/guesses");
+cards.quiz = require("../public/cards/quizzes");
+cards.challenge = require("../public/cards/challenges");
 
 const cardCount = cards.surveys.length + cards.guess.length + cards.quiz.length + cards.challenge.length;
 console.log(`Number of Cards: ${cardCount}`);
