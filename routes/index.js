@@ -22,7 +22,7 @@ io.on("connection", (socket) => {
 	const gameController = require("./modules/gameController")(io, cards, socket, gameMap);
 	const curseController = require("./modules/card/curseController")(io, socket, gameController);
 	const room = require("./modules/roomController")(io, socket, gameController, gameMap);
-	const cardController = require("./modules/card/cardsController")(io, socket, gameController, curseController)
+	const cardController = require("./modules/card/cardsController")(io, socket, gameController, curseController);
 
 	socket.on("disconnect", function () {
 		if (!socket.user || !socket.room) return;
@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
 				}
 			}
 			if (socket.room) {
-				io.to(socket.room).emit("users-changed", {user: socket.user, event: "left"});
+				io.to(socket.room).emit("users-changed", { user: socket.user, event: "left" });
 				gameController.updateAndEmitGame(socket.room);
 			}
 		}
@@ -74,10 +74,10 @@ io.on("connection", (socket) => {
 		if (!socket.user || !socket.room) return;
 		const game = gameMap.get(socket.room);
 
-		const unplayedCardsInGame = gameController.cardsLeftInGame(game);
+		const cardsLeftInGame = gameController.cardsLeftInGame(game);
 
 		// set cardsPerGame to cards left and keep card array
-		if (unplayedCardsInGame < game.cardsPerGame) {
+		if (cardsLeftInGame < game.cardsPerGame) {
 			console.log("\n less unique cards than they want to play, resetting cards array");
 			game.cards = gameController.getCardsForEnabledCategories(game.categories);
 		} else {
@@ -116,7 +116,7 @@ io.on("connection", (socket) => {
 			files.forEach((fileName) => {
 				if (!err && fileName !== "") avatarFileNames.push(fileName);
 			});
-			socket.emit("receiveAvatarList", {avatarFileNames: avatarFileNames});
+			socket.emit("receiveAvatarList", { avatarFileNames: avatarFileNames });
 		});
 	});
 
@@ -124,14 +124,14 @@ io.on("connection", (socket) => {
 		console.log(`set socket user ${JSON.stringify(data.user)}`, socket.id);
 		socket.user = data.user;
 		socket.user.socketId = socket.id;
-		io.to(socket.id).emit("updateUser", {user: socket.user});
+		io.to(socket.id).emit("updateUser", { user: socket.user });
 	});
 
 	socket.on("reconnectRequest", (data) => {
 		console.log(`${JSON.stringify(data.user)}is back`);
 		socket.user = data.user;
 		socket.user.socketId = socket.id;
-		io.to(socket.id).emit("updateUser", {user: socket.user});
+		io.to(socket.id).emit("updateUser", { user: socket.user });
 
 		const usersLastRoom = data.lastRoom;
 		console.log(usersLastRoom ? `users last room was: ${usersLastRoom}` : "");

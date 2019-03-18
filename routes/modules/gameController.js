@@ -1,6 +1,4 @@
 module.exports = function (io, cards, socket, gameMap) {
-
-
 	const gameLogs = {
 		totalSips: 0,
 		gamesPlayed: 0,
@@ -24,7 +22,6 @@ module.exports = function (io, cards, socket, gameMap) {
 			game.players.forEach((player) => {
 				player.hasAnswered = false;
 			});
-
 		},
 		waitForUsers: function () {
 			return new Promise((resolve) => {
@@ -54,8 +51,8 @@ module.exports = function (io, cards, socket, gameMap) {
 
 					console.log(`Emitting sips to: ${JSON.stringify(player)}`);
 
-					io.to(player.socketId).emit("sip", {sips: sipPenalty});
-					io.to(player.socketId).emit("updateUser", {user: player});
+					io.to(player.socketId).emit("sip", { sips: sipPenalty });
+					io.to(player.socketId).emit("updateUser", { user: player });
 				}
 			});
 		},
@@ -68,28 +65,27 @@ module.exports = function (io, cards, socket, gameMap) {
 		reduceCurseTime: function () {
 			this.getGameSession().players.forEach((player) => {
 				player.curses.forEach((curse, i) => {
-					console.log(`Reducing curse time for ${JSON.stringify(curse)}`)
+					console.log(`Reducing curse time for ${JSON.stringify(curse)}`);
 					--curse.roundsLeft;
 
 					// remove curse from player
 					if (curse.roundsLeft === 0) {
-						player.curses == player.curses.splice(i, 1);
+						player.curses.splice(i, 1);
 
 						// reduce multiplier
-						if (curse.category === 'multiplierCurse') {
+						if (curse.category === "multiplierCurse") {
 							player.multiplier -= curse.multiplier;
 						}
 					}
 				});
 
-				io.to(player.socketId).emit("updateUser", {user: player});
+				io.to(player.socketId).emit("updateUser", { user: player });
 			});
 		},
 		setNewRandomAdmin: function () {
 			io.in(socket.room).clients((error, clients) => {
 				if (error) throw error;
-				const randomUser = this.getRandomPlayers(1, clients)[0];
-				this.getGameSession().admin = randomUser;
+				this.getGameSession().admin = this.getRandomPlayers(1, clients)[0];
 			});
 		},
 		emitGameOver: function (reason) {
@@ -127,9 +123,9 @@ module.exports = function (io, cards, socket, gameMap) {
 
 				// only send to one client
 				if (emitToSocket) {
-					socket.emit("gameUpdate", {game: gameMap.get(room)});
+					socket.emit("gameUpdate", { game: gameMap.get(room) });
 				} else {
-					io.in(room).emit("gameUpdate", {game: gameMap.get(room)});
+					io.in(room).emit("gameUpdate", { game: gameMap.get(room) });
 				}
 			});
 		},
