@@ -5,7 +5,6 @@
     "no-await-in-loop": 2,
     "no-compare-neg-zero": 2,
     "no-cond-assign": [2, "always"],
-    "no-console": 1,
     "no-constant-condition": 1,
     "no-control-regex": 2,
     "no-debugger": 2,
