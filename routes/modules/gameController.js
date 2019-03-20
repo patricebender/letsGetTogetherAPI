@@ -7,7 +7,7 @@ module.exports = function (io, cards, socket, gameMap) {
 	};
 
 	return {
-		nextRound: function() {
+		nextRound: function () {
 			const game = this.getGameSession();
 
 			// All cards played, emit game over event
@@ -85,7 +85,8 @@ module.exports = function (io, cards, socket, gameMap) {
 		setNewRandomAdmin: function () {
 			io.in(socket.room).clients((error, clients) => {
 				if (error) throw error;
-				this.getGameSession().admin = this.getRandomPlayers(1, clients)[0];
+				const session = this.getGameSession();
+				[session.admin] = this.getRandomPlayers(1, clients);
 			});
 		},
 		emitGameOver: function (reason) {
@@ -146,12 +147,13 @@ module.exports = function (io, cards, socket, gameMap) {
 		cardsLeftInGame: function () {
 			let cardsLeft = 0;
 			const game = this.getGameSession();
-			for (const key in game.cards) {
-				if (game.cards.hasOwnProperty(key) && this.isCategoryEnabled(game, key)) {
-					console.log(`${key} -> ${game.cards[key].length}`);
-					cardsLeft += game.cards[key].length;
+			Object.keys(game.cards).forEach(function (card) {
+				if (game.cards.hasOwnProperty(card) && this.isCategoryEnabled(game, card)) {
+					console.log(`${card} -> ${game.cards[card].length}`);
+					cardsLeft += game.cards[card].length;
 				}
-			}
+			}, this);
+
 			return cardsLeft;
 		},
 		// needed for calculation of cards left in game

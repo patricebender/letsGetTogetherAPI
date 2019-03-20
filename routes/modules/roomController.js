@@ -1,7 +1,7 @@
 module.exports = function (io, socket, gameController, gameMap) {
 	const isEmpty = function (obj) {
 		return Object.keys(obj).length === 0 && obj.constructor === Object;
-	}
+	};
 
 	const isRoomEmpty = function (name) {
 		return io.sockets.adapter.rooms[name] === undefined;
@@ -24,8 +24,8 @@ module.exports = function (io, socket, gameController, gameMap) {
 					++currentCard.playerLeftCount;
 				}
 
-				socket.to(socket.room).emit("users-changed", {user: socket.user, event: "joined"});
-				socket.emit("roomJoinSucceed", {room: socket.room, game: gameController.getGameSession()});
+				socket.to(socket.room).emit("users-changed", { user: socket.user, event: "joined" });
+				socket.emit("roomJoinSucceed", { room: socket.room, game: gameController.getGameSession() });
 
 				// ++gameLogs.totalPlayers;
 
@@ -68,7 +68,7 @@ module.exports = function (io, socket, gameController, gameMap) {
 
 
 				gameController.updateAndEmitGame(socket.room);
-				socket.emit("roomCreated", {room: socket.room, game: oGame});
+				socket.emit("roomCreated", { room: socket.room, game: oGame });
 
 				// keep track of played games
 				// ++gameLogs.gamesPlayed;
@@ -94,13 +94,13 @@ module.exports = function (io, socket, gameController, gameMap) {
 					console.log("admin left");
 					gameController.setNewRandomAdmin();
 					socket.user.isAdmin = false;
-					socket.emit("updateUser", {user: socket.user});
+					socket.emit("updateUser", { user: socket.user });
 				}
 
 				console.log(`emit user change: ${socket.room}`);
-				io.to(socket.room).emit("users-changed", {user: socket.user, event: "left"});
+				io.to(socket.room).emit("users-changed", { user: socket.user, event: "left" });
 
-				const room = socket.room;
+				const { room } = socket;
 				socket.room = "";
 				gameController.updateAndEmitGame(room);
 			}
