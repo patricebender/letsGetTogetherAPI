@@ -14,22 +14,22 @@ module.exports = function (io, socket, gameController) {
 
 	const calcSips = function (ranking, howManyDrink) {
 		let i = ranking.length - 1;
-
-		while (howManyDrink > 0 && i > 0) {
+		let drinkCount = howManyDrink;
+		while (drinkCount > 0 && i > 0) {
 			// both drink
 			if (ranking[i].rankNumber === ranking[i - 1].rankNumber) {
-				ranking[i].sips = ranking[i].player.multiplier * 1;
+				ranking[i].sips = ranking[i].player.multiplier;
 				gameController.emitSipsTo(ranking[i].player.socketId);
 				// if the two got the first rank and there still need to be sipped, sip.
 				if (i === 1) {
 					console.log(`also emit to first one: ${JSON.stringify(ranking[i - 1].player)}`);
-					ranking[i - 1].sips = ranking[i - 1].player.multiplier * 1;
+					ranking[i - 1].sips = ranking[i - 1].player.multiplier;
 					gameController.emitSipsTo(ranking[i - 1].player.socketId);
 				}
 			} else {
-				ranking[i].sips = ranking[i].player.multiplier * 1;
+				ranking[i].sips = ranking[i].player.multiplier;
 				gameController.emitSipsTo(ranking[i].player.socketId);
-				howManyDrink--;
+				drinkCount--;
 			}
 			i--;
 		}
@@ -64,7 +64,7 @@ module.exports = function (io, socket, gameController) {
 		calcSips(guess.ranking, howManyDrink);
 
 		// noinspection JSUnresolvedFunction
-		io.in(socket.room).emit("guessResults", {guess: guess, ranking: guess.ranking});
+		io.in(socket.room).emit("guessResults", { guess: guess, ranking: guess.ranking });
 		gameController.updateAndEmitGame(socket.room);
 	};
 

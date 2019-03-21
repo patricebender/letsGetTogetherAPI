@@ -1,18 +1,21 @@
 module.exports = function challengeController(io, socket, gameController) {
-
 	const closeAndEmitChallenge = function () {
 		const challenge = gameController.getGameSession().currentCard;
 		challenge.closed = true;
 		console.log(`Everyone has answered. Emitting Results for Challenge: ${JSON.stringify(challenge.title)}`);
 
 
-		const upVotes = challenge.upVotes;
-		const downVotes = challenge.downVotes;
+		const { upVotes } = challenge;
+		const { downVotes } = challenge;
 		console.log(`upVotes x ${upVotes} \n`
 			+ `downVotes x ${downVotes}`);
 
-		downVotes >= upVotes ? challenge.failed = true : challenge.failed = false;
-		challenge.failed ? gameController.emitSipsTo(challenge.player.socketId, 5) : "";
+		if (downVotes >= upVotes) {
+			challenge.failed = true;
+		} else {
+			challenge.failed = false;
+			gameController.emitSipsTo(challenge.player.socketId, challenge.sips);
+		}
 
 		gameController.updateAndEmitGame(socket.room);
 	};
@@ -52,11 +55,12 @@ module.exports = function challengeController(io, socket, gameController) {
 
 		const upVote = !!data.success;
 		console.log(socket.user.name, upVote ? "up" : "down", "votes challenge");
-		upVote ? challenge.upVotes++ : challenge.downVotes++;
+		if (upVote) challenge.upVotes++;
+		else challenge.downVotes++;
 
 		gameController.waitForUsers()
 			.then((users) => {
-				// -1 => dont wait for challenged player
+				// -1 => don't wait for challenged player
 				challenge.playerLeftCount = users.length - 1;
 				if (challenge.playerLeftCount === 0) {
 					// close survey

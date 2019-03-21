@@ -1,5 +1,4 @@
 module.exports = function (io, socket, gameController, curseController) {
-
 	const guessController = require("./guessController")(io, socket, gameController);
 	const challengeController = require("./challengeController")(io, socket, gameController);
 	const quizController = require("./quizController")(io, socket, gameController);
@@ -34,7 +33,7 @@ module.exports = function (io, socket, gameController, curseController) {
 					if (game.currentCategory === "challenge") {
 						io.in(socket.room).clients((error, clients) => {
 							if (error) throw error;
-							gameController.getCurrentCard().player = gameController.getRandomPlayers(1, clients)[0];
+							[gameController.getCurrentCard().player] = gameController.getRandomPlayers(1, clients);
 						});
 					}
 
@@ -55,20 +54,20 @@ module.exports = function (io, socket, gameController, curseController) {
 	const closeAndEmitCurrentCard = function () {
 		const currentCategory = gameController.getCurrentCard().category;
 		switch (currentCategory) {
-		case "guess":
-			guessController.closeAndEmit();
-			break;
-		case "quiz":
-			quizController.closeAndEmit();
-			break;
-		case "survey":
-			surveyController.closeAndEmit();
-			break;
-		case "challenge":
-			challengeController.closeAndEmit();
-			break;
-		default:
-			console.log(`${JSON.stringify(currentCategory)} is not known :O`);
+			case "guess":
+				guessController.closeAndEmit();
+				break;
+			case "quiz":
+				quizController.closeAndEmit();
+				break;
+			case "survey":
+				surveyController.closeAndEmit();
+				break;
+			case "challenge":
+				challengeController.closeAndEmit();
+				break;
+			default:
+				console.log(`${JSON.stringify(currentCategory)} is not known :O`);
 		}
 	};
 

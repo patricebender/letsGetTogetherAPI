@@ -1,5 +1,4 @@
 module.exports = function challengeController(io, socket, gameController) {
-
 	const closeAndEmitSurvey = function () {
 		const survey = gameController.getCurrentCard();
 		survey.closed = true;
@@ -11,11 +10,13 @@ module.exports = function challengeController(io, socket, gameController) {
 
 		console.log(`${firstOption.title} x${firstOption.voters.length}`, `${secondOption.title} x${secondOption.voters.length}`);
 
-		const losers = firstOption.voters.length > secondOption.voters.length
-			? survey.options[1].voters
-			: secondOption.voters.length > firstOption.voters.length
-				? survey.options[0].voters : [];
+		let losers;
 
+		if (firstOption.voters.length > secondOption.voters.length) {
+			losers = survey.options[1].voters;
+		} else {
+			losers = survey.options[0].voters;
+		}
 
 		console.log(`LOSERS ARE: ${JSON.stringify(losers)}`);
 

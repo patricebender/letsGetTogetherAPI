@@ -1,5 +1,4 @@
 module.exports = function challengeController(io, socket, gameController) {
-
 	const compareQuizAnswer = function (rankingA, rankingB) {
 		// compare quiz answers. if both are correct / incorrect the time decides who won
 		const isCorrectA = rankingA.answer.isCorrect;
@@ -31,12 +30,12 @@ module.exports = function challengeController(io, socket, gameController) {
 		if (quiz.wrongAnswerCount === 0) {
 			console.log("everyone answered correctly, slowest player drink");
 			gameController.emitSipsTo(quizRanking[quizRanking.length - 1].player.socketId);
-			quizRanking[quizRanking.length - 1].sips = quizRanking[quizRanking.length - 1].player.multiplier * 1;
+			quizRanking[quizRanking.length - 1].sips = quizRanking[quizRanking.length - 1].player.multiplier;
 		}
 		// everyone with wrong answer drink
 		quizRanking.forEach((rank) => {
 			if (!rank.answer.isCorrect) {
-				rank.sips = rank.player.multiplier * 1;
+				rank.sips = rank.player.multiplier;
 				gameController.emitSipsTo(rank.player.socketId);
 			}
 		});

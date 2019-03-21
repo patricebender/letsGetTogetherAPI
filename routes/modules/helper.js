@@ -5,19 +5,21 @@ module.exports = function () {
 		},
 		round: function (value, exp) {
 			if (typeof exp === "undefined" || +exp === 0) return Math.round(value);
+			let roundedValue = +value;
+			const newExp = +exp;
 
-			value = +value;
-			exp = +exp;
+			console.log(value, exp);
+			console.log(roundedValue, newExp);
 
-			if (isNaN(value) || !(typeof exp === "number" && exp % 1 === 0)) return NaN;
+			if (isNaN(roundedValue) || !(typeof newExp === "number" && newExp % 1 === 0)) return NaN;
 
 			// Shift
-			value = value.toString().split("e");
-			value = Math.round(+(`${value[0]}e${value[1] ? (+value[1] + exp) : exp}`));
+			roundedValue = roundedValue.toString().split("e");
+			roundedValue = Math.round(+(`${roundedValue[0]}e${roundedValue[1] ? (+roundedValue[1] + newExp) : newExp}`));
 
 			// Shift back
-			value = value.toString().split("e");
-			return +(`${value[0]}e${value[1] ? (+value[1] - exp) : -exp}`);
+			roundedValue = roundedValue.toString().split("e");
+			return +(`${roundedValue[0]}e${roundedValue[1] ? (+roundedValue[1] - newExp) : -newExp}`);
 		},
 	};
 };
