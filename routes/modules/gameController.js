@@ -23,6 +23,9 @@ module.exports = function (io, cards, socket, gameMap) {
 				player.hasAnswered = false;
 			});
 		},
+		setGame: function (roomName, oGame) {
+			gameMap.set(roomName, oGame);
+		},
 		waitForUsers: function () {
 			return new Promise((resolve) => {
 				const users = [];

@@ -21,7 +21,7 @@ io.on("connection", (socket) => {
 	const helper = require("./modules/helper")();
 	const gameController = require("./modules/gameController")(io, cards, socket, gameMap);
 	const curseController = require("./modules/card/curseController")(io, socket, gameController);
-	const room = require("./modules/roomController")(io, socket, gameController, gameMap);
+	const roomController = require("./modules/roomController")(io, socket, gameController);
 	const cardController = require("./modules/card/cardsController")(io, socket, gameController, curseController);
 
 	socket.on("disconnect", function () {
@@ -48,7 +48,7 @@ io.on("connection", (socket) => {
 		}
 
 		console.log(`Socket disconnects: ${JSON.stringify(socket.user)}`);
-		if (room.isRoomEmpty(socket.room)) {
+		if (roomController.isRoomEmpty(socket.room)) {
 			// if room is empty delete it from session array
 			console.log("no one is in the room anymore.. Deleting room");
 			gameMap.set(socket.room, undefined);

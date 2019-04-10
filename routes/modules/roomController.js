@@ -1,4 +1,4 @@
-module.exports = function (io, socket, gameController, gameMap) {
+module.exports = function (io, socket, gameController) {
 	const isEmpty = function (obj) {
 		return Object.keys(obj).length === 0 && obj.constructor === Object;
 	};
@@ -64,8 +64,7 @@ module.exports = function (io, socket, gameController, gameMap) {
 					curseEnabled: data.curseEnabled,
 				};
 
-				gameMap.set(data.room, oGame);
-
+				gameController.setGame(data.room, oGame);
 
 				gameController.updateAndEmitGame(socket.room);
 				socket.emit("roomCreated", { room: socket.room, game: oGame });
@@ -88,7 +87,8 @@ module.exports = function (io, socket, gameController, gameMap) {
 			if (this.isRoomEmpty(socket.room)) {
 				// if room is empty delete it from session array
 				console.log("no one is in the room anymore..");
-				gameMap.set(socket.room, undefined);
+				// remove game
+				gameController.setGame(socket.room, undefined);
 			} else {
 				if (socket.user.isAdmin) {
 					console.log("admin left");
