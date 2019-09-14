@@ -62,7 +62,7 @@ module.exports = [
         "failed": false,
         "playerQuit": false
 
-    },{
+    }, {
         "category": "challenge",
         "closed": false,
         "title": "Sing ein Lied von Sido!",
@@ -77,7 +77,7 @@ module.exports = [
         "failed": false,
         "playerQuit": false
 
-    },{
+    }, {
         "category": "challenge",
         "closed": false,
         "title": "Erzähle einen (witzigen) Witz!",
@@ -92,7 +92,7 @@ module.exports = [
         "failed": false,
         "playerQuit": false
 
-    },{
+    }, {
         "category": "challenge",
         "closed": false,
         "title": "Erzähle eine peinliche Story!",
@@ -107,7 +107,7 @@ module.exports = [
         "failed": false,
         "playerQuit": false
 
-    },{
+    }, {
         "category": "challenge",
         "closed": false,
         "title": "Zähle 10 Bundesländer auf!",
@@ -122,7 +122,7 @@ module.exports = [
         "failed": false,
         "playerQuit": false
 
-    },{
+    }, {
         "category": "challenge",
         "closed": false,
         "title": "Mache 30 Squats!",
