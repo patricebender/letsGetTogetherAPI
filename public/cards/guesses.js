@@ -276,7 +276,7 @@ module.exports = [
         "ranking": []
     }, {
         "category": "guess",
-        "question": "Was ist das höchste für eine Bowlinbgkugel zugelassene Gewicht?",
+        "question": "Was ist das höchste für eine Bowlingkugel zugelassene Gewicht?",
         "answer": 7.26,
         "answerCount": 0,
         "unit": "kg",
