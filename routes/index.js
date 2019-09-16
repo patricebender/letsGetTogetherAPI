@@ -140,7 +140,7 @@ io.on("connection", (socket) => {
 
 		if (game) {
 			console.log("Room still exists. "
-				+ "\nWill Reconnect User");
+        + "\nWill Reconnect User");
 			socket.emit("userReconnected");
 		} else {
 			console.log("Room does not exist.");
@@ -190,4 +190,8 @@ const PORT = 8080;
 
 http.listen(PORT, function () {
 	console.log(`listening on http://localhost:${PORT}`);
+});
+
+app.get("/", function (req, res) {
+	res.sendFile(`${__dirname}/default.html`);
 });
