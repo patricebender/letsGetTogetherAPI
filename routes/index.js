@@ -3,8 +3,8 @@ const http = require("http").Server(app);
 
 
 const io = require("socket.io")(http, {
-	pingInterval: 11000,
-	pingTimeout: 10000,
+	pingInterval: 4000,
+	pingTimeout: 5000,
 });
 const gameMap = new Map();
 
