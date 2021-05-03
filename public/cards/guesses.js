@@ -575,7 +575,7 @@ module.exports = [
 	}, {
 		category: "guess",
 		question: "Wieviel Bytes hat 1Gb?",
-		answer: 1000000000,
+		answer: 125000000,
 		answerCount: 0,
 		unit: "Byte",
 		closed: false,
