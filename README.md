@@ -24,7 +24,7 @@ npm install
 
 Run the server on localhost:
 ```sh
-DEV=true node routes/index.js
+node routes/index.js
 ```
 
 ## Release History
