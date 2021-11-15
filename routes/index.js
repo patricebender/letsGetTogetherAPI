@@ -2,17 +2,19 @@ const app = require("express")();
 const http = require("http").Server(app);
 
 
+const allowAll = (req, callback) => {
+	callback(null, true);
+}
+
+const allowProd = (req, callback) => {
+	callback(null, req.headers.origin === 'http://letsgetfuckedup.patrice.codes')
+}
+
 const io = require("socket.io")(http, {
 	pingInterval: 4000,
 	pingTimeout: 5000,
+	allowRequest: process.env.DEV? allowAll : allowProd,
 });
-
-if (process.env.DEV) {
-	io.origins("http://localhost:5000");
-}
-else {
-	io.origins("http://letsgetfuckedup.patrice.codes");
-}
 
 const gameMap = new Map();
 
