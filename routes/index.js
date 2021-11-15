@@ -6,6 +6,14 @@ const io = require("socket.io")(http, {
 	pingInterval: 4000,
 	pingTimeout: 5000,
 });
+
+if (process.env.DEV) {
+	io.origins("http://localhost:5000");
+}
+else {
+	io.origins("http://letsgetfuckedup.patrice.codes");
+}
+
 const gameMap = new Map();
 
 const cards = {};
