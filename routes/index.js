@@ -5,7 +5,9 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http, {
 	pingInterval: 4000,
 	pingTimeout: 5000,
+	allowRequest: (req, callback) => callback(null, true),
 });
+
 const gameMap = new Map();
 
 const cards = {};
