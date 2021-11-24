@@ -972,7 +972,7 @@ module.exports = [{
 },
 {
   category: "survey",
-  question: "Die besser TV Show ist..",
+  question: "Die bessere TV Show ist..",
   answerCount: 0,
   closed: false,
   options: [
