@@ -735,7 +735,8 @@ module.exports = [{
       answerCount: 0,
     },
   ],
-}, {
+},
+{
   category: "survey",
   question: "Würdest du lieber von…",
   answerCount: 0,
@@ -753,5 +754,418 @@ module.exports = [{
     },
   ],
 },
-
+{
+  category: "survey",
+  question: "Was ist besser",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Snowboard",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Ski",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "2 Wochen auf...",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "... Computer verzichten",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "... Smartphone verzichten",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Was ist besser",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Harry Potter",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Der Herr der Ringe",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Welches ist das coolere Haustier",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Hund",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Katze",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Wie würdest Du Dich beschreiben?",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Pessimist",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Optimist",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Was ist besser",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Bier",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Wein",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Wie würdest Du Dich beschreiben?",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Nachteule",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Frühaufsteherin",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Lieber..",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Standurlaub",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Wanderurlaub",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Lieber..",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Schwitzen",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Frieren",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Würdest Du lieber..",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Eine Karotte sein",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Eine Gurke sein",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Lieber nur noch in..",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "... Jogginghose rumlaufen",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "... Jeans rumlaufen",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Lieber ein..",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "... Huhn sein",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "... Schwein sein",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Die besser TV Show ist..",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "... Game of Thrones",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "... Breaking Bad",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Lieber...",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "... im Lotto gewinnen",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "... doppelt so lange leben",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Das bessere Genre ist...",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "... Hip-Hop",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "... Rock",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Wer gewinnt im Kampf",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "... Spiderman",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "... Batman",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Aliens existieren",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Stimmt",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Stimmt nicht",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Investieren in",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Cryptos",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Aktien",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Der bessere James Bond Film ist..",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Casino Royale",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Goldeneye",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Lieber...",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Online-Shopping",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Im Laden einkaufen",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Bessere TV-Show",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Southpark",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Simpsons",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Lieber...",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Fahrer",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Beifahrerin",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
+{
+  category: "survey",
+  question: "Besserer Künstler",
+  answerCount: 0,
+  closed: false,
+  options: [
+    {
+      title: "Michael Jackson",
+      voters: [],
+      answerCount: 0,
+    },
+    {
+      title: "Elvis Presley",
+      voters: [],
+      answerCount: 0,
+    },
+  ],
+},
 ];
